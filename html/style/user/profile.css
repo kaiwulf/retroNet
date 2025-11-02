@@ -1,0 +1,29 @@
+.outer-user-profile {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: bisque;
+}
+
+#grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, [col-start] 1fr);
+    grid-gap: 5px;
+}
+
+#box {
+    background-color: rgb(0, 255, 149);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+#row1 {
+    grid-row: 1;
+    grid-column: col-start / span 1;
+}
+
+#row2 {
+    grid-row: 2;
+    grid-column: col-start 1 / span 1;
+}

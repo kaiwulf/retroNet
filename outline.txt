@@ -1,0 +1,52 @@
+retronet/
+│
+├── retroApp/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── usenet.py
+│   │   └── chatroom.py
+│   │
+│   ├── views/
+│   │   ├── __init__.py
+│   │   ├── home.py
+│   │   ├── user.py
+│   │   ├── chatroom.py
+│   │   ├── usenet.py
+│   │   ├── auth
+│   │       ├── auth.py
+│   │       ├── signin.py
+│   │       ├── signup.py
+│   │
+│   ├── static/
+│   │   ├── images/
+│   │   │   ├── construction.gif
+│   │   │   ├── new.gif
+│   │   │   └── hot.gif
+│   │   ├── css/
+│   │   │   └── retro.css
+│   │   └── js/
+│   │       └── retro.js
+│   │
+│   └── templates/
+│       ├── base.html
+│       ├── landing/
+│       │   └── index.html
+│       ├── auth/
+│       │   ├── signin.html
+│       │   └── signup.html
+│       ├── user/
+│       │   └── profile.html
+│       ├── chatroom/
+│       │   └── index.html
+│       └── usenet/
+│           ├── groups.html
+│           └── thread.html
+│
+├── requirements.txt
+├── config.py
+├── hypercorn_config.py
+├── db.py
+└── run.py

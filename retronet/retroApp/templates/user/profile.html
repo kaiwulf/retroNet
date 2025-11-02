@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ username }}'s retroNet Page{% endblock %}
+
+{% block content %}
+<div class="user-profile">
+    <div class="profile-header">
+        <h2>{{ username }}'s Page</h2>
+        <p class="stalker-count">Stalkers: 0</p>
+    </div>
+
+    <div class="profile-music">
+        <p>🎵 Now Playing: [Music player coming soon]</p>
+    </div>
+
+    <div class="profile-content">
+        <section class="about">
+            <h3>About Me</h3>
+            <p>This user hasn't customized their page yet!</p>
+        </section>
+
+        <section class="blog">
+            <h3>Latest Blog Posts</h3>
+            <p>No posts yet.</p>
+        </section>
+
+        <section class="feed">
+            <h3>Activity Feed</h3>
+            <p>No activity yet.</p>
+        </section>
+    </div>
+
+    <div class="profile-footer">
+        <p><em>Customized with MTHL (coming soon!)</em></p>
+    </div>
+</div>
+{% endblock %}

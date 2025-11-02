@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>90s Style CSS Effects</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            background-color: #C0C0C0;
+            color: #000080;
+            padding: 20px;
+        }
+
+        /* Marquee effect */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            background-color: #FFFF00;
+            padding: 10px 0;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Contrasting borders */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #FFFFFF;
+            border: 5px outset #808080;
+        }
+
+        .header {
+            background-color: #000080;
+            color: #FFFFFF;
+            padding: 10px;
+            border-bottom: 5px ridge #C0C0C0;
+        }
+
+        .content {
+            padding: 20px;
+            border-bottom: 5px groove #808080;
+        }
+
+        .footer {
+            background-color: #008080;
+            color: #FFFFFF;
+            padding: 10px;
+            border-top: 5px ridge #C0C0C0;
+        }
+
+        /* Additional 90s-style button */
+        .retro-button {
+            background-color: #FF00FF;
+            color: #FFFFFF;
+            border: 3px outset #FF69B4;
+            padding: 5px 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .retro-button:active {
+            border-style: inset;
+        }
+    </style>
+</head>
+<body>
+    <div class="marquee-container">
+        <div class="marquee-content">
+            Welcome to my awesome 90s-style website! Check out these cool CSS effects!
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>90s Style Website</h1>
+        </div>
+        <div class="content">
+            <p>This is a demonstration of contrasting borders and other 90s-style CSS effects.</p>
+            <button class="retro-button">Click me!</button>
+        </div>
+        <div class="footer">
+            <p>© 2024 My Retro Website</p>
+        </div>
+    </div>
+</body>
+</html>

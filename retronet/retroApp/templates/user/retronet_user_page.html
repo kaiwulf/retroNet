@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.username }}'s retroNet Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Verdana, sans-serif;
+            font-size: 12px;
+            background: #ffffff;
+            color: #000000;
+            /* User customizable background via MTHL */
+            {% if user.bg_color %}
+            background-color: {{ user.bg_color }};
+            {% endif %}
+            {% if user.bg_image %}
+            background-image: url('{{ user.bg_image }}');
+            background-attachment: fixed;
+            {% endif %}
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* Header Navigation */
+        .top-nav {
+            background: linear-gradient(to bottom, #6699CC, #336699);
+            padding: 8px 15px;
+            color: white;
+            margin-bottom: 10px;
+            border: 1px solid #000;
+        }
+
+        .top-nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(to bottom, #CCCCFF, #9999CC);
+            border: 2px solid #6666CC;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .profile-header h1 {
+            font-size: 24px;
+            color: #000066;
+            margin-bottom: 5px;
+        }
+
+        .profile-tagline {
+            font-style: italic;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .profile-stats {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Main Layout */
+        .main-content {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Left Column */
+        .left-column {
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        /* Right Column */
+        .right-column {
+            flex-grow: 1;
+        }
+
+        /* Module Box Styling */
+        .module {
+            background: #FFFFFF;
+            border: 2px solid #0066CC;
+            margin-bottom: 10px;
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+        }
+
+        .module-header {
+            background: linear-gradient(to bottom, #6699FF, #3366CC);
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-bottom: 1px solid #0066CC;
+        }
+
+        .module-content {
+            padding: 10px;
+        }
+
+        /* Profile Picture */
+        .profile-pic {
+            text-align: center;
+        }
+
+        .profile-pic img {
+            max-width: 100%;
+            border: 3px solid #0066CC;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* Contact Table */
+        .contact-table {
+            width: 100%;
+        }
+
+        .contact-table td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        .contact-btn {
+            display: block;
+            background: linear-gradient(to bottom, #FF9933, #FF6600);
+            color: white;
+            text-decoration: none;
+            padding: 5px;
+            border: 1px solid #CC3300;
+            border-radius: 3px;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+
+        .contact-btn:hover {
+            background: linear-gradient(to bottom, #FFAA44, #FF7711);
+        }
+
+        /* Stalkers Section */
+        .stalkers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .stalker-card {
+            text-align: center;
+            font-size: 10px;
+        }
+
+        .stalker-card img {
+            width: 60px;
+            height: 60px;
+            border: 1px solid #0066CC;
+            object-fit: cover;
+        }
+
+        .stalker-card a {
+            color: #0066CC;
+            text-decoration: none;
+        }
+
+        .stalker-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* About Me */
+        .about-content {
+            line-height: 1.4;
+            {% if user.text_color %}
+            color: {{ user.text_color }};
+            {% endif %}
+        }
+
+        /* Blog Posts */
+        .blog-post {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .blog-post:last-child {
+            border-bottom: none;
+        }
+
+        .blog-title {
+            font-weight: bold;
+            color: #0066CC;
+            margin-bottom: 5px;
+        }
+
+        .blog-date {
+            font-size: 10px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .blog-content {
+            margin: 8px 0;
+        }
+
+        .blog-link {
+            color: #0066CC;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        /* Music Player */
+        .music-player {
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #999;
+            text-align: center;
+        }
+
+        .music-player audio {
+            width: 100%;
+        }
+
+        /* Comments */
+        .comment {
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 0;
+        }
+
+        .comment-header {
+            font-weight: bold;
+            color: #0066CC;
+            margin-bottom: 5px;
+        }
+
+        .comment-date {
+            font-size: 10px;
+            color: #999;
+        }
+
+        /* Details List */
+        .details-list {
+            list-style: none;
+        }
+
+        .details-list li {
+            padding: 3px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .details-list strong {
+            color: #0066CC;
+        }
+
+        /* Feed Items */
+        .feed-item {
+            border-left: 3px solid #6699CC;
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .feed-source {
+            font-weight: bold;
+            color: #0066CC;
+            font-size: 11px;
+        }
+
+        .feed-title {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .feed-preview {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* View All Link */
+        .view-all {
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .view-all a {
+            color: #0066CC;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .view-all a:hover {
+            text-decoration: underline;
+        }
+
+        /* Comment Form */
+        .comment-form textarea {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #999;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .comment-form button {
+            background: linear-gradient(to bottom, #6699FF, #3366CC);
+            color: white;
+            border: 1px solid #0066CC;
+            padding: 5px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .comment-form button:hover {
+            background: linear-gradient(to bottom, #77AAFF, #4477DD);
+        }
+
+        /* Stalker Count */
+        .stalker-count {
+            text-align: center;
+            font-weight: bold;
+            color: #0066CC;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <a href="/">retroNet Home</a>
+        <a href="/browse">Browse</a>
+        <a href="/forums">Forums</a>
+        <a href="/usenet">Usenet</a>
+        <a href="/search">Search</a>
+        <a href="/profile">My Profile</a>
+        <a href="/logout">Sign Out</a>
+    </div>
+
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <h1>{{ user.display_name or user.username }}</h1>
+            {% if user.tagline %}
+            <div class="profile-tagline">"{{ user.tagline }}"</div>
+            {% endif %}
+            <div class="profile-stats">
+                {{ user.age or 'Age not specified' }} | 
+                {{ user.location or 'Location not specified' }} | 
+                Last Login: {{ user.last_login | datetime_format }}
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Profile Picture -->
+                <div class="module">
+                    <div class="module-header">{{ user.username }}</div>
+                    <div class="module-content profile-pic">
+                        <img src="{{ user.profile_pic or '/static/default-profile.png' }}" alt="{{ user.username }}">
+                    </div>
+                </div>
+
+                <!-- Music Player -->
+                {% if user.profile_song %}
+                <div class="module">
+                    <div class="module-header">Now Playing</div>
+                    <div class="module-content">
+                        <div class="music-player">
+                            <div style="margin-bottom: 5px;">{{ user.profile_song_title or 'Profile Song' }}</div>
+                            <audio controls autoplay loop>
+                                <source src="{{ user.profile_song }}" type="audio/mpeg">
+                                Your browser doesn't support the audio element.
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Contact Box -->
+                <div class="module">
+                    <div class="module-header">Contact {{ user.username }}</div>
+                    <div class="module-content">
+                        <table class="contact-table">
+                            <tr>
+                                <td><a href="/message/{{ user.username }}" class="contact-btn">Send Message</a></td>
+                                <td><a href="/stalk/{{ user.username }}" class="contact-btn">Stalk User</a></td>
+                            </tr>
+                            <tr>
+                                <td><a href="/user/{{ user.username }}/pics" class="contact-btn">View Pics</a></td>
+                                <td><a href="/user/{{ user.username }}/blog" class="contact-btn">View Blog</a></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- User Details -->
+                <div class="module">
+                    <div class="module-header">{{ user.username }}'s Details</div>
+                    <div class="module-content">
+                        <ul class="details-list">
+                            <li><strong>Status:</strong> {{ user.status or 'Online' }}</li>
+                            {% if user.location %}
+                            <li><strong>Location:</strong> {{ user.location }}</li>
+                            {% endif %}
+                            {% if user.age %}
+                            <li><strong>Age:</strong> {{ user.age }}</li>
+                            {% endif %}
+                            {% if user.website %}
+                            <li><strong>Website:</strong> <a href="{{ user.website }}">{{ user.website }}</a></li>
+                            {% endif %}
+                            <li><strong>Member Since:</strong> {{ user.created_at | date_format }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Stalkers (Top 8) -->
+                <div class="module">
+                    <div class="module-header">{{ user.username }}'s Stalkers</div>
+                    <div class="module-content">
+                        <div class="stalker-count">{{ user.stalker_count or 0 }} Stalkers</div>
+                        <div class="stalkers-grid">
+                            {% for stalker in user.stalkers[:8] %}
+                            <div class="stalker-card">
+                                <a href="/user/{{ stalker.username }}">
+                                    <img src="{{ stalker.profile_pic or '/static/default-profile.png' }}" alt="{{ stalker.username }}">
+                                    <div>{{ stalker.display_name or stalker.username }}</div>
+                                </a>
+                            </div>
+                            {% else %}
+                            <div style="grid-column: 1 / -1; text-align: center; color: #999;">
+                                No stalkers yet!
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if user.stalker_count > 8 %}
+                        <div class="view-all">
+                            <a href="/user/{{ user.username }}/stalkers">View All Stalkers</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- About Me -->
+                <div class="module">
+                    <div class="module-header">About Me:</div>
+                    <div class="module-content about-content">
+                        {{ user.about_me or 'This user hasn\'t written anything about themselves yet.' | safe }}
+                    </div>
+                </div>
+
+                <!-- Recent Blog Posts -->
+                <div class="module">
+                    <div class="module-header">{{ user.username }}'s Latest Blog Entry</div>
+                    <div class="module-content">
+                        {% for post in user.recent_blog_posts[:3] %}
+                        <div class="blog-post">
+                            <div class="blog-title">{{ post.title }}</div>
+                            <div class="blog-date">{{ post.created_at | datetime_format }}</div>
+                            <div class="blog-content">{{ post.preview | safe }}</div>
+                            <a href="/blog/{{ post.id }}" class="blog-link">[Read More]</a>
+                        </div>
+                        {% else %}
+                        <div style="color: #999; text-align: center;">No blog posts yet.</div>
+                        {% endfor %}
+                        <div class="view-all">
+                            <a href="/user/{{ user.username }}/blog">View All Blog Entries</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed (Forums & Usenet) -->
+                <div class="module">
+                    <div class="module-header">{{ user.username }}'s Feed</div>
+                    <div class="module-content">
+                        {% for item in user.feed_items[:5] %}
+                        <div class="feed-item">
+                            <div class="feed-source">
+                                {% if item.type == 'forum' %}
+                                📋 Forum: {{ item.source }}
+                                {% elif item.type == 'usenet' %}
+                                📰 Usenet: {{ item.source }}
+                                {% endif %}
+                            </div>
+                            <div class="feed-title">{{ item.title }}</div>
+                            <div class="feed-preview">{{ item.preview }}</div>
+                            <div class="blog-date">{{ item.created_at | datetime_format }}</div>
+                        </div>
+                        {% else %}
+                        <div style="color: #999; text-align: center;">
+                            No feed items. Subscribe to forums and Usenet groups to see content here!
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="module">
+                    <div class="module-header">{{ user.username }}'s Comments ({{ user.comment_count or 0 }})</div>
+                    <div class="module-content">
+                        {% for comment in user.comments[:5] %}
+                        <div class="comment">
+                            <div class="comment-header">
+                                <a href="/user/{{ comment.author.username }}">{{ comment.author.display_name or comment.author.username }}</a>
+                                <span class="comment-date">{{ comment.created_at | datetime_format }}</span>
+                            </div>
+                            <div>{{ comment.content | safe }}</div>
+                        </div>
+                        {% else %}
+                        <div style="color: #999; text-align: center;">No comments yet.</div>
+                        {% endfor %}
+                        
+                        {% if current_user %}
+                        <div class="comment-form" style="margin-top: 15px;">
+                            <form action="/user/{{ user.username }}/comment" method="POST">
+                                <textarea name="comment" rows="4" placeholder="Leave a comment..."></textarea>
+                                <button type="submit">Post Comment</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                        
+                        {% if user.comment_count > 5 %}
+                        <div class="view-all">
+                            <a href="/user/{{ user.username }}/comments">View All Comments</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auto-play music script -->
+    {% if user.profile_song %}
+    <script>
+        // Try to autoplay (may be blocked by browser policies)
+        document.addEventListener('DOMContentLoaded', function() {
+            var audio = document.querySelector('audio');
+            if (audio) {
+                audio.play().catch(function(error) {
+                    console.log('Autoplay was prevented:', error);
+                });
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

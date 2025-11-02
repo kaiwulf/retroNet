@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}retroNet - Welcome to Your Space on the Web!{% endblock %}
+
+{% block content %}
+<div class="landing-page">
+    <!-- Hero Section with Glitter Graphics -->
+    <div class="hero-section">
+        <div class="glitter-container">
+            <h2 class="rainbow-text">🌈 Welcome to retroNet! 🌈</h2>
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="sparkle" class="sparkle-gif">
+        </div>
+        
+        <marquee behavior="alternate" class="hero-marquee">
+            ✨ Your Space. Your Style. Your Rules. ✨
+        </marquee>
+        
+        <div class="construction-notice">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="under construction" class="construction-gif">
+            <span class="blink">🚧 UNDER CONSTRUCTION 🚧</span>
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="under construction" class="construction-gif">
+        </div>
+    </div>
+
+    <!-- Main Content Grid (MySpace Style) -->
+    <div class="content-grid">
+        <!-- Left Column - Features Box -->
+        <div class="sidebar-left">
+            <div class="info-box">
+                <h3 class="box-header">📌 Why retroNet?</h3>
+                <div class="box-content">
+                    <ul class="feature-list">
+                        <li>🎵 <strong>Auto-Playing Music</strong> - Just like Tom intended!</li>
+                        <li>👀 <strong>"Stalkers"</strong> instead of boring "followers"</li>
+                        <li>🎨 <strong>MTHL Customization</strong> - Make your page YOURS</li>
+                        <li>📰 <strong>Usenet Groups</strong> - Real discussions, no algorithms</li>
+                        <li>💬 <strong>Chat Rooms</strong> - A/S/L?</li>
+                        <li>🚫 <strong>Anti-Influencer</strong> - No fake, just real</li>
+                        <li>✨ <strong>Glitter Text</strong> - Because why not?</li>
+                        <li>🔥 <strong>Top 8</strong> - Choose your faves!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Survey Box (Very 90s) -->
+            <div class="info-box survey-box">
+                <h3 class="box-header">📊 Quick Poll</h3>
+                <div class="box-content">
+                    <p><strong>What's your vibe?</strong></p>
+                    <form>
+                        <label><input type="radio" name="vibe"> 🎸 Emo</label><br>
+                        <label><input type="radio" name="vibe"> 🌟 Scene</label><br>
+                        <label><input type="radio" name="vibe"> 🎭 Goth</label><br>
+                        <label><input type="radio" name="vibe"> 🌈 Raver</label><br>
+                        <button type="button" class="small-button">Vote!</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Column - Main Content -->
+        <div class="main-content">
+            <!-- Welcome Message -->
+            <div class="welcome-box">
+                <div class="profile-pic-placeholder">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect fill='%23ff00ff' width='200' height='200'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='60' fill='%2300ffff'%3EretroNet%3C/text%3E%3C/svg%3E" alt="retroNet">
+                </div>
+                <h2 class="gradient-text">👋 Hey there, Cyber Surfer! 👋</h2>
+                <p class="welcome-text">
+                    Welcome to <strong>retroNet</strong> - the social network that brings back the REAL internet! 
+                    Remember when the web was FUN? When you could customize your page with sparkly backgrounds 
+                    and auto-playing music? When "friends" were called "stalkers" as a joke? 
+                    <em>Those days are BACK, baby!</em>
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="card-header">🎵 Profile Music</div>
+                    <div class="card-body">
+                        <p>Upload your favorite song and blast it on your profile! Visitors WILL listen. 
+                        <span class="small-text">(Whether they want to or not 😈)</span></p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-header">👀 Stalker System</div>
+                    <div class="card-body">
+                        <p>Forget "followers" - we call them what they are: STALKERS! Collect your digital stalkers 
+                        and show off your Top 8!</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-header">📝 Blog Your Heart Out</div>
+                    <div class="card-body">
+                        <p>Long-form posts! Diary entries! Emo poetry! Share your thoughts without character limits 
+                        or engagement metrics!</p>
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="card-header">🎨 MTHL Customization</div>
+                    <div class="card-body">
+                        <p>Our custom Manic Text Hyperlink Language (MTHL) lets you pimp your profile with colors, 
+                        patterns, and pure chaos!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <div class="cta-box">
+                    <h3>🚀 Ready to Join the Revolution? 🚀</h3>
+                    <p>Stop being a product. Start being a PERSON again.</p>
+                    <div class="button-group">
+                        <a href="{{ url_for('auth.signup') }}" class="big-button primary">
+                            ✨ Sign Up NOW! ✨
+                        </a>
+                        <a href="{{ url_for('auth.signin') }}" class="big-button secondary">
+                            🔐 Login
+                        </a>
+                    </div>
+                    <p class="small-text">No ads. No algorithms. No influencers. Just YOU.</p>
+                </div>
+            </div>
+
+            <!-- Testimonials (Fake but fun) -->
+            <div class="testimonials">
+                <h3 class="section-title">💬 What People Are Saying</h3>
+                <div class="testimonial-grid">
+                    <div class="testimonial">
+                        <p>"It's like MySpace and Geocities had a baby!" - xXx_DarkAngel_xXx</p>
+                    </div>
+                    <div class="testimonial">
+                        <p>"Finally, I can use Comic Sans unironically!" - RaverGirl2000</p>
+                    </div>
+                    <div class="testimonial">
+                        <p>"My eyes hurt but in a GOOD way!" - SceneKid94</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Updates & Extras -->
+        <div class="sidebar-right">
+            <!-- Latest Updates -->
+            <div class="info-box">
+                <h3 class="box-header">🔥 What's HOT 🔥</h3>
+                <div class="box-content">
+                    <ul class="updates-list">
+                        <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="new-icon" alt="new"> Profile music now louder!</li>
+                        <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="hot-icon" alt="hot"> Glitter text generator added!</li>
+                        <li><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="new-icon" alt="new"> Chat rooms open 24/7!</li>
+                        <li>More Comic Sans options!</li>
+                        <li>Animated GIF library expanded!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Stats Box -->
+            <div class="info-box stats-box">
+                <h3 class="box-header">📊 Stats</h3>
+                <div class="box-content">
+                    <p><strong>Total Members:</strong> 1,337</p>
+                    <p><strong>Active Now:</strong> 42</p>
+                    <p><strong>Profiles Pimped:</strong> 888</p>
+                    <p><strong>Songs Playing:</strong> 420</p>
+                    <p><strong>Glitter Used:</strong> ∞</p>
+                </div>
+            </div>
+
+            <!-- WebRing Badge -->
+            <div class="info-box webring-box">
+                <h3 class="box-header">🌐 WebRing</h3>
+                <div class="box-content center">
+                    <p>This site is part of the<br><strong>Retro Web Revival</strong> ring</p>
+                    <div class="webring-nav">
+                        <a href="#">◀ Previous</a>
+                        <a href="#">Random</a>
+                        <a href="#">Next ▶</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Affiliate Buttons (Classic 90s) -->
+            <div class="info-box">
+                <h3 class="box-header">🔗 Link to Us!</h3>
+                <div class="box-content center">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 31'%3E%3Crect fill='%23ff00ff' width='88' height='31'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%23ffffff'%3EretroNet%3C/text%3E%3C/svg%3E" alt="retroNet button" class="button-88x31">
+                    <p class="small-text">Copy the code below:</p>
+                    <textarea rows="2" readonly>&lt;a href="retronet.com"&gt;&lt;img src="button.gif"&gt;&lt;/a&gt;</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add some extra retro flair
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate visitor counter
+    const counter = document.getElementById('visitor-count');
+    if (counter) {
+        let count = 1337;
+        setInterval(() => {
+            count += Math.floor(Math.random() * 3);
+            counter.textContent = String(count).padStart(6, '0');
+        }, 5000);
+    }
+    
+    // Random sparkles
+    createSparkles();
+});
+
+function createSparkles() {
+    const sparkles = ['✨', '⭐', '🌟', '💫', '⚡'];
+    setInterval(() => {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'floating-sparkle';
+        sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(sparkle);
+        
+        setTimeout(() => sparkle.remove(), 5000);
+    }, 2000);
+}
+</script>
+{% endblock %}
