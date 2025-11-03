@@ -7,6 +7,8 @@ retronet/
 │   │   ├── __init__.py
 │   │   ├── user.py
 │   │   ├── usenet.py
+|   |   ├── db.py
+│   │   ├── schema.db
 │   │   └── chatroom.py
 │   │
 │   ├── views/
@@ -33,14 +35,19 @@ retronet/
 │   └── templates/
 │       ├── base.html
 │       ├── landing/
-│       │   └── index.html
+│       │   └── landing.html
 │       ├── auth/
 │       │   ├── signin.html
 │       │   └── signup.html
 │       ├── user/
+│       │   ├── blog
+│       │   |    ├── blog.html
+│       │   ├── edit.html
+│       │   ├── user.html
 │       │   └── profile.html
-│       ├── chatroom/
-│       │   └── index.html
+│       ├── chat/
+│       │   ├── rooms.html
+│       │   └── chat.html
 │       └── usenet/
 │           ├── groups.html
 │           └── thread.html

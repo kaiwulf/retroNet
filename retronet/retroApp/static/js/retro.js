@@ -270,3 +270,170 @@ window.retroNet = {
     parseMTHL: parseMTHL,
     initMusicPlayer: initMusicPlayer
 };
+
+// ═══════════════════════════════════════════════════════════
+// Live Stats with AJAX Polling
+// ═══════════════════════════════════════════════════════════
+
+let statsUpdateInterval = null;
+let failedAttempts = 0;
+const MAX_FAILED_ATTEMPTS = 5;
+
+function startStatsPolling() {
+    console.log('🚀 Starting live stats polling...');
+    
+    // Initial update
+    updateStats();
+    
+    // Poll every 5 seconds
+    statsUpdateInterval = setInterval(updateStats, 5000);
+}
+
+function stopStatsPolling() {
+    if (statsUpdateInterval) {
+        clearInterval(statsUpdateInterval);
+        statsUpdateInterval = null;
+        console.log('🛑 Stats polling stopped');
+    }
+}
+
+function updateStats() {
+    fetch('/api/stats')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(stats => {
+            // Reset failed attempts on success
+            failedAttempts = 0;
+            
+            console.log('📊 Stats updated:', stats);
+            
+            // Update visitor counter
+            updateVisitorCounter(stats.visitors);
+            
+            // Update stats
+            updateStat('total-members', stats.members);
+            updateStat('active-now', stats.active_now);
+            updateStat('profiles-pimped', stats.profiles_pimped);
+            updateStat('songs-playing', stats.songs_playing);
+        })
+        .catch(err => {
+            failedAttempts++;
+            console.error(`❌ Stats update failed (${failedAttempts}/${MAX_FAILED_ATTEMPTS}):`, err);
+            
+            // Stop polling after too many failures
+            if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+                console.error('❌ Too many failed attempts, stopping polling');
+                stopStatsPolling();
+                
+                // Try to restart after a longer delay
+                setTimeout(() => {
+                    console.log('🔄 Attempting to restart stats polling...');
+                    failedAttempts = 0;
+                    startStatsPolling();
+                }, 30000); // 30 seconds
+            }
+        });
+}
+
+// Update visitor counter with smooth animation
+function updateVisitorCounter(count) {
+    const counter = document.getElementById('visitor-count');
+    if (!counter) return;
+    
+    const currentCount = parseInt(counter.textContent.replace(/\D/g, '')) || 0;
+    const targetCount = count;
+    
+    // If difference is small, animate the counting
+    if (Math.abs(targetCount - currentCount) < 100 && targetCount !== currentCount) {
+        animateCounter(counter, currentCount, targetCount, 1000);
+    } else if (targetCount !== currentCount) {
+        // Large difference or initial load, just update directly
+        counter.textContent = String(targetCount).padStart(6, '0');
+        counter.classList.add('stat-pulse');
+        setTimeout(() => counter.classList.remove('stat-pulse'), 500);
+    }
+}
+
+// Animate counter from start to end value
+function animateCounter(element, start, end, duration) {
+    const startTime = Date.now();
+    const difference = end - start;
+    
+    function update() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Ease out animation
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(start + difference * easeOut);
+        
+        element.textContent = String(current).padStart(6, '0');
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            // Add pulse effect at the end
+            element.classList.add('stat-pulse');
+            setTimeout(() => element.classList.remove('stat-pulse'), 500);
+        }
+    }
+    
+    requestAnimationFrame(update);
+}
+
+// Update individual stat with animation
+function updateStat(id, value) {
+    const elem = document.getElementById(id);
+    if (!elem) return;
+    
+    const currentValue = elem.textContent.trim();
+    const newValue = String(value);
+    
+    // Only animate if value changed
+    if (currentValue !== newValue) {
+        // Add update animation
+        elem.classList.add('stat-update');
+        elem.textContent = newValue;
+        
+        // Remove animation class after it completes
+        setTimeout(() => {
+            elem.classList.remove('stat-update');
+        }, 500);
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Only start polling on pages that have stats
+    if (document.getElementById('visitor-count')) {
+        console.log('🚀 Initializing live stats...');
+        startStatsPolling();
+    }
+});
+
+// Stop polling when page unloads
+window.addEventListener('beforeunload', function() {
+    stopStatsPolling();
+});
+
+// Pause when page is hidden, resume when visible
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        console.log('👁️ Page hidden, pausing stats polling');
+        stopStatsPolling();
+    } else {
+        console.log('👁️ Page visible, resuming stats polling');
+        if (document.getElementById('visitor-count')) {
+            startStatsPolling();
+        }
+    }
+});
+
+// Expose control functions for debugging
+window.startStats = startStatsPolling;
+window.stopStats = stopStatsPolling;
+window.updateStatsNow = updateStats;

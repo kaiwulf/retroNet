@@ -1,6 +1,6 @@
-# created by virtualenv automatically
 CACHEDIR.TAG
 bin/
 pyvenv.cfg
 __pycache__
 lib
+var

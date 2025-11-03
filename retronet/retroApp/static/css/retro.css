@@ -676,3 +676,130 @@ em {
         width: 100%;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Live Stats Animations
+   ═══════════════════════════════════════════════════════════ */
+
+/* Pulse animation for visitor counter */
+.stat-pulse {
+    animation: statPulse 0.5s ease-out;
+}
+
+@keyframes statPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+        color: #ff00ff;
+        text-shadow: 0 0 20px #ff00ff;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Update animation for individual stats */
+.stat-update {
+    animation: statUpdate 0.5s ease-out;
+}
+
+@keyframes statUpdate {
+    0% {
+        transform: scale(1);
+        color: inherit;
+    }
+    25% {
+        transform: scale(1.15) rotate(-2deg);
+        color: #ff00ff;
+    }
+    50% {
+        transform: scale(1.2);
+        color: #00ffff;
+        text-shadow: 0 0 15px currentColor;
+    }
+    75% {
+        transform: scale(1.15) rotate(2deg);
+        color: #ffff00;
+    }
+    100% {
+        transform: scale(1);
+        color: inherit;
+    }
+}
+
+/* Glowing effect for stats that are updating */
+.stats-box p {
+    transition: all 0.3s ease;
+}
+
+.stats-box p:has(.stat-update) {
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.1), transparent);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+/* Loading state for stats */
+.stats-loading {
+    opacity: 0.5;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Connection indicator (optional) */
+.stats-connection-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    font-size: 0.9em;
+    display: none;
+    z-index: 10000;
+}
+
+.stats-connection-indicator.connected {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.stats-connection-indicator.connecting {
+    display: block;
+    color: #ffff00;
+    border-color: #ffff00;
+    animation: blink 1s ease-in-out infinite;
+}
+
+.stats-connection-indicator.disconnected {
+    display: block;
+    color: #ff0000;
+    border-color: #ff0000;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Smooth number transitions */
+#visitor-count,
+.stats-box span[id] {
+    display: inline-block;
+    min-width: 1ch;
+    text-align: center;
+    transition: color 0.3s ease;
+}
