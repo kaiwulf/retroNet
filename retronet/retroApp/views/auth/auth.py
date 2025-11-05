@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, g, redirect, render_template, request, session, url_for
+    Blueprint, g, redirect, render_template, request, flash, session, url_for
 )
 
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -29,10 +29,12 @@ def signup():
                     (username, generate_password_hash(password)),
                 )
                 db.commit()
+                flash('Account created successfully! Please sign in.')
+                return redirect(url_for("auth.signin"))
             except db.IntegrityError:
                 error = f"User {username} is already signuped"
-            else:
-                return redirect(url_for("auth.signin"))
+            # else:
+            #     return redirect(url_for("auth.signin"))
         # flush(error)
     return render_template('auth/signup.html')
 
@@ -41,7 +43,6 @@ def signin():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # new_password = request.form['new-password']
         db = get_db()
         error = None
         user = db.execute(
@@ -50,31 +51,16 @@ def signin():
 
         if user is None:
             error = 'Incorrect username'
-        # This code will be for updating password in a new page in auth/
-        # elif new_password:
-        #     try:
-        #         db.execute(
-        #             "UPDATE user SET password = ? WHERE username = ?", (generate_password_hash(new_password), username)
-        #         )
-        #         db.commit()
-        #     except db.IntegrityError:
-        #         error = f"Error changing password"
-        #     else:
-        #         return redirect(url_for("auth.login"))
-        # if password is not None:
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password'
-        else:
-            print(f"password empty")
-
-        print(f"error: {error}")
         
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('user.profile'))
-
-        # flush(error)
+            print(f"Going to user.profile")
+            flash(f'Welcome back, {username}!', 'success')
+            return redirect(url_for('user.user.profile', username=username))
+        flash(error, 'error')
     return render_template('auth/signin.html')
 
 @bp.before_app_request
@@ -91,14 +77,14 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
+    flash('You have been logged out.')
     return redirect(url_for('landing.landing'))
 
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
-
+            return redirect(url_for('auth.signin'))
         return view(**kwargs)
     return wrapped_view
 

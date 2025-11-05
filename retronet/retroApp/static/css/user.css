@@ -1,0 +1,326 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+    background: #ffffff;
+    color: #000000;
+    /* User customizable background via MTHL */
+    {% if user.bg_color %}
+    background-color: {{ user.bg_color }};
+    {% endif %}
+    {% if user.bg_image %}
+    background-image: url('{{ user.bg_image }}');
+    background-attachment: fixed;
+    {% endif %}
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* Header Navigation */
+.top-nav {
+    background: linear-gradient(to bottom, #6699CC, #336699);
+    padding: 8px 15px;
+    color: white;
+    margin-bottom: 10px;
+    border: 1px solid #000;
+}
+
+.top-nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.top-nav a:hover {
+    text-decoration: underline;
+}
+
+/* Profile Header */
+.profile-header {
+    background: linear-gradient(to bottom, #CCCCFF, #9999CC);
+    border: 2px solid #6666CC;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.profile-header h1 {
+    font-size: 24px;
+    color: #000066;
+    margin-bottom: 5px;
+}
+
+.profile-tagline {
+    font-style: italic;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.profile-stats {
+    font-size: 11px;
+    color: #666;
+}
+
+/* Main Layout */
+.main-content {
+    display: flex;
+    gap: 10px;
+}
+
+/* Left Column */
+.left-column {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+/* Right Column */
+.right-column {
+    flex-grow: 1;
+}
+
+/* Module Box Styling */
+.module {
+    background: #FFFFFF;
+    border: 2px solid #0066CC;
+    margin-bottom: 10px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+}
+
+.module-header {
+    background: linear-gradient(to bottom, #6699FF, #3366CC);
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #0066CC;
+}
+
+.module-content {
+    padding: 10px;
+}
+
+/* Profile Picture */
+.profile-pic {
+    text-align: center;
+}
+
+.profile-pic img {
+    max-width: 100%;
+    border: 3px solid #0066CC;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Contact Table */
+.contact-table {
+    width: 100%;
+}
+
+.contact-table td {
+    padding: 5px;
+    text-align: center;
+}
+
+.contact-btn {
+    display: block;
+    background: linear-gradient(to bottom, #FF9933, #FF6600);
+    color: white;
+    text-decoration: none;
+    padding: 5px;
+    border: 1px solid #CC3300;
+    border-radius: 3px;
+    font-weight: bold;
+    margin: 2px 0;
+}
+
+.contact-btn:hover {
+    background: linear-gradient(to bottom, #FFAA44, #FF7711);
+}
+
+/* Stalkers Section */
+.stalkers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+.stalker-card {
+    text-align: center;
+    font-size: 10px;
+}
+
+.stalker-card img {
+    width: 60px;
+    height: 60px;
+    border: 1px solid #0066CC;
+    object-fit: cover;
+}
+
+.stalker-card a {
+    color: #0066CC;
+    text-decoration: none;
+}
+
+.stalker-card a:hover {
+    text-decoration: underline;
+}
+
+/* About Me */
+.about-content {
+    line-height: 1.4;
+    {% if user.text_color %}
+    color: {{ user.text_color }};
+    {% endif %}
+}
+
+/* Blog Posts */
+.blog-post {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+.blog-post:last-child {
+    border-bottom: none;
+}
+
+.blog-title {
+    font-weight: bold;
+    color: #0066CC;
+    margin-bottom: 5px;
+}
+
+.blog-date {
+    font-size: 10px;
+    color: #666;
+    font-style: italic;
+}
+
+.blog-content {
+    margin: 8px 0;
+}
+
+.blog-link {
+    color: #0066CC;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+/* Music Player */
+.music-player {
+    background: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #999;
+    text-align: center;
+}
+
+.music-player audio {
+    width: 100%;
+}
+
+/* Comments */
+.comment {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 0;
+}
+
+.comment-header {
+    font-weight: bold;
+    color: #0066CC;
+    margin-bottom: 5px;
+}
+
+.comment-date {
+    font-size: 10px;
+    color: #999;
+}
+
+/* Details List */
+.details-list {
+    list-style: none;
+}
+
+.details-list li {
+    padding: 3px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.details-list strong {
+    color: #0066CC;
+}
+
+/* Feed Items */
+.feed-item {
+    border-left: 3px solid #6699CC;
+    padding-left: 10px;
+    margin-bottom: 10px;
+}
+
+.feed-source {
+    font-weight: bold;
+    color: #0066CC;
+    font-size: 11px;
+}
+
+.feed-title {
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.feed-preview {
+    font-size: 11px;
+    color: #666;
+}
+
+/* View All Link */
+.view-all {
+    text-align: right;
+    margin-top: 5px;
+}
+
+.view-all a {
+    color: #0066CC;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+.view-all a:hover {
+    text-decoration: underline;
+}
+
+/* Comment Form */
+.comment-form textarea {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #999;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.comment-form button {
+    background: linear-gradient(to bottom, #6699FF, #3366CC);
+    color: white;
+    border: 1px solid #0066CC;
+    padding: 5px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.comment-form button:hover {
+    background: linear-gradient(to bottom, #77AAFF, #4477DD);
+}
+
+/* Stalker Count */
+.stalker-count {
+    text-align: center;
+    font-weight: bold;
+    color: #0066CC;
+    margin-bottom: 10px;
+}

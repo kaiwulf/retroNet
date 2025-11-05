@@ -100,7 +100,7 @@ def create_retroNet(test_config=None):
     from .views.auth import auth
     app.register_blueprint(auth.bp)
 
-    from .views import user
+    from .views.user import user
     app.register_blueprint(user.bp)
     # app.add_url_rule('/user')
 

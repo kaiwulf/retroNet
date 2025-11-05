@@ -1,0 +1,59 @@
+-- Create user table
+CREATE TABLE IF NOT EXISTS user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    profile_customized INTEGER DEFAULT 0,
+    profile_music TEXT, -- how do I add music list?
+    -- how do I add stalkers?
+    invite_key TEXT NOT NULL,
+    display_name TEXT,
+    profile_pic TEXT
+);
+
+-- Create table for user blog post
+CREATE TABLE IF NOT EXISTS user_blog_post (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  author_id INTEGER NOT NULL,
+  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES user (id)
+);
+
+CREATE TABLE IF NOT EXISTS forum (
+  forum_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  forum_title TEXT NOT NULL,
+  poster_id INTEGER NOT NULL -- will be the user id of the user who posted the comment
+  -- add forum_post foreign key
+);
+
+CREATE TABLE IF NOT EXISTS forum_posts (
+  post_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  poster_id INTEGER NOT NULL, -- will be the user id of the user who posted the comment
+  body TEXT NOT NULL
+  -- will need a way to store reacts
+)
+
+-- Create visitors table for tracking unique visitors
+CREATE TABLE IF NOT EXISTS visitors (
+    visitor_id TEXT PRIMARY KEY,
+    first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index for faster queries on last_seen
+CREATE INDEX IF NOT EXISTS idx_visitors_last_seen ON visitors(last_seen);
+
+-- Add columns to user table for tracking activity and customization
+-- Note: SQLite doesn't support ALTER TABLE ADD COLUMN IF NOT EXISTS,
+-- so you may need to check if these columns exist first
+
+-- Create index for faster queries on user last_seen
+CREATE INDEX IF NOT EXISTS idx_user_last_seen ON user(last_seen);
+CREATE INDEX IF NOT EXISTS idx_user_profile_customized ON user(profile_customized);
+
+CREATE INDEX IF NOT EXISTS idx_visitors_last_seen ON visitors(last_seen);
+CREATE INDEX IF NOT EXISTS idx_user_blog_post_author ON user_blog_post(author_id);
+CREATE INDEX IF NOT EXISTS idx_user_blog_post_created ON user_blog_post(created);

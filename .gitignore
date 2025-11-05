@@ -3,4 +3,3 @@ bin/
 pyvenv.cfg
 __pycache__
 lib
-var

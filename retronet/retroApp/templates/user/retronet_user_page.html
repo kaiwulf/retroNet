@@ -26,6 +26,14 @@
             {% endif %}
         }
 
+        .verl {
+            width: 1px; /* Thickness of the line */
+            background-color: black; /* Color of the line */
+            height: 15px; /* Height of the line, adjust as needed */
+            float: left; /* Or use flexbox/grid for positioning */
+            margin: 0 10px; /* Adjust spacing around the line */
+        }
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -347,6 +355,7 @@
 
     <div class="container">
         <!-- Profile Header -->
+        <!-- Will likely remove profile header
         <div class="profile-header">
             <h1>{{ user.display_name or user.username }}</h1>
             {% if user.tagline %}
@@ -358,6 +367,7 @@
                 Last Login: {{ user.last_login | datetime_format }}
             </div>
         </div>
+        -->
 
         <!-- Main Content Area -->
         <div class="main-content">
@@ -369,6 +379,19 @@
                     <div class="module-content profile-pic">
                         <img src="{{ user.profile_pic or '/static/default-profile.png' }}" alt="{{ user.username }}">
                     </div>
+                    <!-- Profile Info - may not need here -->
+                    <!--
+                    <div class="profile-info">
+                        <h1>{{ user.display_name or user.username }}</h1>
+                        {% if user.tagline %}
+                        <div class="profile-tagline">"{{ user.tagline }}"</div>
+                        {% endif %}
+                        <div class="profile-stats">
+                            {{ user.age or 'Age not specified' }} | 
+                            {{ user.location or 'Location not specified' }} | 
+                            Last Login: {{ user.last_login | datetime_format }}
+                    </div>
+                -->
                 </div>
 
                 <!-- Music Player -->
