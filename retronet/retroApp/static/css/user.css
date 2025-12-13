@@ -4,21 +4,6 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: Arial, Verdana, sans-serif;
-    font-size: 12px;
-    background: #ffffff;
-    color: #000000;
-    /* User customizable background via MTHL */
-    {% if user.bg_color %}
-    background-color: {{ user.bg_color }};
-    {% endif %}
-    {% if user.bg_image %}
-    background-image: url('{{ user.bg_image }}');
-    background-attachment: fixed;
-    {% endif %}
-}
-
 .container {
     max-width: 1000px;
     margin: 0 auto;
@@ -170,14 +155,6 @@ body {
 
 .stalker-card a:hover {
     text-decoration: underline;
-}
-
-/* About Me */
-.about-content {
-    line-height: 1.4;
-    {% if user.text_color %}
-    color: {{ user.text_color }};
-    {% endif %}
 }
 
 /* Blog Posts */

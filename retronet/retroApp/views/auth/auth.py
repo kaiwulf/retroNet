@@ -14,6 +14,8 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        email = request.form['email']
+        key = request.form['key']
         db = get_db()
         error = None
 
@@ -25,17 +27,21 @@ def signup():
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password, email, invite_key) VALUES (?, ?, ?, ?)",
+                    (username, generate_password_hash(password), email, key),
                 )
                 db.commit()
                 flash('Account created successfully! Please sign in.')
-                return redirect(url_for("auth.signin"))
-            except db.IntegrityError:
-                error = f"User {username} is already signuped"
-            # else:
-            #     return redirect(url_for("auth.signin"))
-        # flush(error)
+                return redirect(url_for("create.new_profile", username=username))
+                # return redirect(url_for("auth.signin"))
+            except db.IntegrityError as e:
+                error = f"Error registering {username} because error '{e}' occured"
+                flash(error)
+                print(error)
+        else:
+            flash("error creating account")
+            print("Error creating account: '{error}'")
+            return redirect(url_for("auth.signup"))
     return render_template('auth/signup.html')
 
 @bp.route('/signin', methods=('GET','POST'))
@@ -59,7 +65,7 @@ def signin():
             session['user_id'] = user['id']
             print(f"Going to user.profile")
             flash(f'Welcome back, {username}!', 'success')
-            return redirect(url_for('user.user.profile', username=username))
+            return redirect(url_for('user.profile', username=username))
         flash(error, 'error')
     return render_template('auth/signin.html')
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Message - retroNet</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="menu-bar">
+        <div class="menu-item">File</div>
+        <div class="menu-item">Edit</div>
+        <div class="menu-item">View</div>
+        <div class="menu-item">Message</div>
+        <div class="menu-item">Help</div>
+    </div>
+
+    <div class="compose-window">
+        <div class="compose-header">
+            <h2>{% if reply_to %}Reply to Message{% else %}New Message{% endif %}</h2>
+        </div>
+        
+        <form method="POST" class="compose-form">
+            <div class="form-group">
+                <label for="author_name">Your Name:</label>
+                <input type="text" id="author_name" name="author_name" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="author_email">Your Email:</label>
+                <input type="email" id="author_email" name="author_email" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="newsgroup">Newsgroups:</label>
+                <input type="text" id="newsgroup" name="newsgroup" class="form-input" 
+                       value="{{ group.name }}" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" class="form-input" 
+                       value="{% if reply_to %}Re: {{ reply_to.subject }}{% endif %}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="body">Message:</label>
+                <textarea id="body" name="body" class="form-textarea" rows="20" required>{% if reply_to %}
+
+On {{ reply_to.date.strftime('%m/%d/%Y') }}, {{ reply_to.author_name }} wrote:
+{% for line in reply_to.body.split('\n') %}
+> {{ line }}
+{% endfor %}
+
+{% endif %}</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="toolbar-btn">Post Message</button>
+                <button type="button" class="toolbar-btn" onclick="window.history.back()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

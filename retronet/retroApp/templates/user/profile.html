@@ -1,5 +1,5 @@
 {% extends "user_base.html" %}
-
+{% block content %}
 <!-- Main Content Area -->
 <div class="container">
     <div class="main-content">
@@ -72,7 +72,7 @@
                 <div class="module-content">
                     <div class="stalker-count">{{ user.stalker_count or 0 }} Stalkers</div>
                     <div class="stalkers-grid">
-                        {% for stalker in user.stalkers[:8] %}
+                        {% for stalker in user.stalker_list %}
                         <div class="stalker-card">
                             <a href="/user/{{ stalker.username }}">
                                 <img src="{{ stalker.profile_pic or '/static/default-profile.png' }}" alt="{{ stalker.username }}">
@@ -199,3 +199,4 @@
     });
 </script>
 {% endif %}
+{% endblock %}

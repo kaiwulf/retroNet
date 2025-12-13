@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}retroNet Newsreader{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+        <div class="menu-item">File</div>
+        <div class="menu-item">Edit</div>
+        <div class="menu-item">View</div>
+        <div class="menu-item">Message</div>
+        <div class="menu-item">Help</div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <button class="toolbar-btn">Get Msg</button>
+        <button class="toolbar-btn">New Msg</button>
+        <button class="toolbar-btn">Reply</button>
+        <button class="toolbar-btn">Forward</button>
+        <div class="toolbar-separator"></div>
+        <button class="toolbar-btn">File</button>
+        <button class="toolbar-btn">Next</button>
+        <button class="toolbar-btn">Print</button>
+        <button class="toolbar-btn">Delete</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-container">
+        <!-- Left Pane: Newsgroup List -->
+        <div class="left-pane">
+            <div class="pane-header">Newsgroups</div>
+            <div class="newsgroup-tree">
+                {% for category, groups in categories.items() %}
+                <div class="tree-category">
+                    <div class="tree-item category-item">
+                        <span class="tree-icon">▼</span>
+                        <span class="folder-icon">📁</span>
+                        {{ category }}
+                    </div>
+                    <div class="tree-children">
+                        {% for group in groups %}
+                        <div class="tree-item newsgroup-item {% if selected_group and selected_group.id == group.id %}selected{% endif %}">
+                            <a href="{{ url_for('view_group', group_id=group.id) }}" class="newsgroup-link">
+                                <span class="tree-indent"></span>
+                                <span class="newsgroup-icon">📰</span>
+                                {{ group.name }} ({{ group.article_count }})
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Splitter -->
+        <div class="splitter-vertical"></div>
+
+        <!-- Right Side: Thread List and Message Viewer -->
+        <div class="right-container">
+            <!-- Top-Right Pane: Thread List -->
+            <div class="top-right-pane">
+                <div class="pane-header">
+                    {% if selected_group %}
+                        {{ selected_group.name }}
+                    {% else %}
+                        Select a newsgroup
+                    {% endif %}
+                </div>
+                <div class="thread-list">
+                    {% if threads %}
+                    <table class="thread-table">
+                        <thead>
+                            <tr>
+                                <th class="col-thread" width="30"></th>
+                                <th class="col-subject">Subject</th>
+                                <th class="col-author" width="150">Author</th>
+                                <th class="col-date" width="120">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for thread in threads %}
+                                {{ render_thread(thread, 0) }}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">
+                        {% if selected_group %}
+                        No articles in this newsgroup yet.
+                        {% else %}
+                        Select a newsgroup to view articles.
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Splitter -->
+            <div class="splitter-horizontal"></div>
+
+            <!-- Bottom-Right Pane: Message Viewer -->
+            <div class="bottom-right-pane">
+                {% if selected_article %}
+                <div class="message-toolbar">
+                    <button class="toolbar-btn-small">Reply</button>
+                    <button class="toolbar-btn-small">Forward</button>
+                    <button class="toolbar-btn-small">Post New</button>
+                </div>
+                <div class="message-viewer">
+                    <div class="message-headers">
+                        <div class="header-row">
+                            <span class="header-label">From:</span>
+                            <span class="header-value">{{ selected_article.author_name }} &lt;{{ selected_article.author }}&gt;</span>
+                        </div>
+                        <div class="header-row">
+                            <span class="header-label">Newsgroups:</span>
+                            <span class="header-value">{{ selected_group.name }}</span>
+                        </div>
+                        <div class="header-row">
+                            <span class="header-label">Subject:</span>
+                            <span class="header-value">{{ selected_article.subject }}</span>
+                        </div>
+                        <div class="header-row">
+                            <span class="header-label">Date:</span>
+                            <span class="header-value">{{ selected_article.date.strftime('%a, %d %b %Y %H:%M:%S') }}</span>
+                        </div>
+                        <div class="header-row">
+                            <span class="header-label">Message-ID:</span>
+                            <span class="header-value">{{ selected_article.message_id }}</span>
+                        </div>
+                    </div>
+                    <div class="message-body">
+                        {{ selected_article.body|format_message|safe }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    Select a message to read
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+
+<!-- Macro for rendering threaded messages -->
+{% macro render_thread(article, depth) %}
+<tr class="thread-row {% if selected_article and selected_article.id == article.id %}selected{% endif %}" 
+    data-article-id="{{ article.id }}">
+    <td class="col-thread">
+        {% if article.children %}
+        <span class="thread-icon">►</span>
+        {% endif %}
+        {% if not article.read %}
+        <span class="unread-icon">✉</span>
+        {% endif %}
+    </td>
+    <td class="col-subject">
+        <a href="{{ url_for('view_article', article_id=article.id) }}" class="subject-link">
+            <span class="thread-indent" style="padding-left: {{ depth * 20 }}px;"></span>
+            {{ article.subject }}
+        </a>
+    </td>
+    <td class="col-author">{{ article.author_name }}</td>
+    <td class="col-date">{{ article.date.strftime('%m/%d/%y') }}</td>
+</tr>
+{% if article.children %}
+    {% for child in article.children %}
+        {{ render_thread(child, depth + 1) }}
+    {% endfor %}
+{% endif %}
+{% endmacro %}

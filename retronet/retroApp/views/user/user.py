@@ -1,5 +1,6 @@
 from flask import Blueprint, g, render_template
-from retroApp.models.user import get_user_profile
+from retroApp.models.user.user import get_user_profile
+import pprint
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -16,7 +17,6 @@ def profile(username):
     # Get user profile data from model
     print(f"In user profile")
     profile_data = get_user_profile(username)
-    print(f"profile data is: {profile_data}")
     
     if profile_data is None:
         abort(404, f"User '{username}' not found")
@@ -25,9 +25,12 @@ def profile(username):
     is_own_profile = False
     if g.user and g.user['username'] == username:
         is_own_profile = True
+
+    print("profile data is...")
+    pprint.pprint(profile_data)
     
     return render_template(
         'user/profile.html',
-        profile=profile_data,
+        user=profile_data,
         is_own_profile=is_own_profile
     )

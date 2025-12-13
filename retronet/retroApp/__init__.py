@@ -92,6 +92,32 @@ def create_retroNet(test_config=None):
                 db.commit()
             except:
                 pass
+    
+    @app.template_filter('date_format')
+    def date_format(value):
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value)
+            except (ValueError, AttributeError):
+                return value
+        if isinstance(value, datetime):
+            return value.strftime("%B %d, %Y")
+        return str(value)
+
+    @app.template_filter('datetime_format')
+    def datetime_format(value):
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value)
+            except (ValueError, AttributeError):
+                return value
+        if isinstance(value, datetime):
+            return value.strftime("%B %d, %Y at %I:%M %p")
+        return str(value)
 
 
     from .views import landing
@@ -102,19 +128,15 @@ def create_retroNet(test_config=None):
 
     from .views.user import user
     app.register_blueprint(user.bp)
-    # app.add_url_rule('/user')
-
-    # from .views import home
-    # app.register_blueprint(home.bp)
-    # app.add_url_rule('/home')
+    
+    from .views.user import create
+    app.register_blueprint(create.bp)
 
     from .views import chat
     app.register_blueprint(chat.bp)
-    # app.add_url_rule('/chat')
 
     from .views import usenet
     app.register_blueprint(usenet.bp)
-    # app.add_url_rule('/usenet')
     
     return app
 
