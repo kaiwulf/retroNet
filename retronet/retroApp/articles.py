@@ -1,3 +1,6 @@
+from flask import redirect, url_for, request, render_template
+from markupsafe import escape, Markup
+
 def article_tools(app):
 
     @app.template_filter('format_message')
@@ -96,3 +99,61 @@ def article_tools(app):
             return redirect(url_for('view_group', group_id=group['id']))
         
         return render_template('post.html', group=group, reply_to=article)
+    
+    @app.route('/group/<int:group_id>')
+    def view_group(group_id):
+        """View a specific newsgroup"""
+        group = next((g for g in NEWSGROUPS if g['id'] == group_id), None)
+        if not group:
+            return redirect(url_for('index'))
+        
+        # Get articles for this group
+        articles = [a for a in ARTICLES if a['newsgroup_id'] == group_id]
+        
+        # Build thread structure
+        threads = build_threads(articles)
+        
+        # Group newsgroups by category for left pane
+        categories = {}
+        for g in NEWSGROUPS:
+            cat = g['category']
+            if cat not in categories:
+                categories[cat] = []
+            categories[cat].append(g)
+        
+        return render_template('index.html',
+                            categories=categories,
+                            selected_group=group,
+                            threads=threads,
+                            selected_article=None)
+
+    @app.route('/demo/quotes')
+    def quote_demo():
+        """Demo page showing quote block system"""
+        return render_template('quote-demo.html')
+
+    @app.route('/demo/preview')
+    def static_preview():
+        """Static preview of the newsreader interface"""
+        return render_template('static-preview.html')
+
+def build_threads(articles):
+    """Build threaded structure from flat article list"""
+    # Create lookup dict
+    article_dict = {a['id']: a.copy() for a in articles}
+    
+    # Add children list to each article
+    for article in article_dict.values():
+        article['children'] = []
+    
+    # Build tree
+    roots = []
+    for article in article_dict.values():
+        if article['parent_id'] is None:
+            roots.append(article)
+        else:
+            parent = article_dict.get(article['parent_id'])
+            if parent:
+                parent['children'].append(article)
+    
+    return roots

@@ -5,4 +5,4 @@ bp = Blueprint('usenet', __name__)
 @bp.route('/usenet', methods=('GET', 'POST'))
 def usenet():
     """Main usenet page for retroNet"""
-    return render_template('usenet/groups.html')
+    return render_template('usenet/index.html')

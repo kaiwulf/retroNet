@@ -3,9 +3,7 @@ from asgiref.wsgi import WsgiToAsgi
 import asyncio, httpx
 import aiosqlite
 import os
-from datetime import datetime
 from functools import wraps
-import hashlib
 
 # def ycms_factory(test_config=None):
 def create_retroNet(test_config=None):
@@ -65,27 +63,6 @@ def create_retroNet(test_config=None):
     app.register_blueprint(usenet.bp)
     
     return app
-
-def build_threads(articles):
-    """Build threaded structure from flat article list"""
-    # Create lookup dict
-    article_dict = {a['id']: a.copy() for a in articles}
-    
-    # Add children list to each article
-    for article in article_dict.values():
-        article['children'] = []
-    
-    # Build tree
-    roots = []
-    for article in article_dict.values():
-        if article['parent_id'] is None:
-            roots.append(article)
-        else:
-            parent = article_dict.get(article['parent_id'])
-            if parent:
-                parent['children'].append(article)
-    
-    return roots
 
 def create_asgi_app():
     flask_app = create_retroNet()

@@ -1,3 +1,5 @@
+import hashlib
+from datetime import datetime
 
 def visitors(app):
     @app.before_request
