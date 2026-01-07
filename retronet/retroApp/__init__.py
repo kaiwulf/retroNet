@@ -37,88 +37,14 @@ def create_retroNet(test_config=None):
         except Exception as e:
             print(f"ℹ️  Database already exists or error: {e}")
 
-    @app.before_request
-    def track_visitor():
-        """Track visitors on each page request"""
-        from flask import request, session, g
-        from retroApp.models.db import get_db
-        
-        # Skip tracking for static files and stats stream
-        if request.endpoint in ('static', 'landing.stats_stream'):
-            return
-        
-        # Get or create visitor ID from session
-        if 'visitor_id' not in session:
-            # Create unique visitor ID based on IP and user agent
-            visitor_id = hashlib.md5(
-                f"{request.remote_addr}{request.headers.get('User-Agent', '')}".encode()
-            ).hexdigest()
-            session['visitor_id'] = visitor_id
-            session.permanent = True  # Keep session alive
-            
-            # Record new visitor
-            try:
-                db = get_db()
-                db.execute(
-                    "INSERT OR IGNORE INTO visitors (visitor_id, first_seen, last_seen) VALUES (?, ?, ?)",
-                    (visitor_id, datetime.now(), datetime.now())
-                )
-                db.commit()
-            except Exception as e:
-                # Table might not exist yet, ignore error
-                print(f"Visitor tracking error: {e}")
-                pass
-        else:
-            # Update last seen for existing visitor
-            try:
-                db = get_db()
-                db.execute(
-                    "UPDATE visitors SET last_seen = ? WHERE visitor_id = ?",
-                    (datetime.now(), session['visitor_id'])
-                )
-                db.commit()
-            except Exception as e:
-                # Ignore errors
-                pass
-        
-        # Update last_seen for logged-in users
-        if hasattr(g, 'user') and g.user:
-            try:
-                db = get_db()
-                db.execute(
-                    "UPDATE user SET last_seen = ? WHERE id = ?",
-                    (datetime.now(), g.user['id'])
-                )
-                db.commit()
-            except:
-                pass
-    
-    @app.template_filter('date_format')
-    def date_format(value):
-        if value is None:
-            return ""
-        if isinstance(value, str):
-            try:
-                value = datetime.fromisoformat(value)
-            except (ValueError, AttributeError):
-                return value
-        if isinstance(value, datetime):
-            return value.strftime("%B %d, %Y")
-        return str(value)
+    from .template_filters import register_filters
+    register_filters(app)
 
-    @app.template_filter('datetime_format')
-    def datetime_format(value):
-        if value is None:
-            return ""
-        if isinstance(value, str):
-            try:
-                value = datetime.fromisoformat(value)
-            except (ValueError, AttributeError):
-                return value
-        if isinstance(value, datetime):
-            return value.strftime("%B %d, %Y at %I:%M %p")
-        return str(value)
+    from .middleware import visitors
+    visitors(app)
 
+    from .articles import article_tools
+    article_tools(app)
 
     from .views import landing
     app.register_blueprint(landing.bp)
@@ -139,6 +65,27 @@ def create_retroNet(test_config=None):
     app.register_blueprint(usenet.bp)
     
     return app
+
+def build_threads(articles):
+    """Build threaded structure from flat article list"""
+    # Create lookup dict
+    article_dict = {a['id']: a.copy() for a in articles}
+    
+    # Add children list to each article
+    for article in article_dict.values():
+        article['children'] = []
+    
+    # Build tree
+    roots = []
+    for article in article_dict.values():
+        if article['parent_id'] is None:
+            roots.append(article)
+        else:
+            parent = article_dict.get(article['parent_id'])
+            if parent:
+                parent['children'].append(article)
+    
+    return roots
 
 def create_asgi_app():
     flask_app = create_retroNet()

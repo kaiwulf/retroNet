@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>retroNet - Support Us!</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --win95-gray: #c0c0c0;
+            --win95-dark: #808080;
+            --win95-light: #ffffff;
+            --win95-darker: #404040;
+            --win95-blue: #000080;
+            --win95-cyan: #008080;
+            --retro-pink: #ff00ff;
+            --retro-green: #00ff00;
+            --retro-yellow: #ffff00;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.03) 2px,
+                    rgba(0,0,0,0.03) 4px
+                ),
+                linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
+            background-attachment: fixed;
+            color: #00ff00;
+            image-rendering: pixelated;
+        }
+
+        /* Starfield effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, white, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, white, transparent),
+                radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 160px 120px, white, transparent),
+                radial-gradient(2px 2px at 200px 50px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 250px 160px, white, transparent),
+                radial-gradient(2px 2px at 300px 100px, rgba(255,255,255,0.5), transparent);
+            background-size: 350px 200px;
+            animation: twinkle 4s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Classic Windows 95 Window */
+        .window {
+            background: var(--win95-gray);
+            border: 3px solid;
+            border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
+            box-shadow: 
+                inset 1px 1px 0 var(--win95-light),
+                inset -1px -1px 0 var(--win95-dark),
+                4px 4px 0 rgba(0,0,0,0.5);
+        }
+
+        .window-titlebar {
+            background: linear-gradient(90deg, var(--win95-blue), var(--win95-cyan));
+            padding: 3px 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .window-title {
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .window-title-icon {
+            width: 16px;
+            height: 16px;
+            background: 
+                linear-gradient(135deg, #ffcc00 25%, #ff9900 75%);
+            border: 1px solid #996600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .window-buttons {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-btn {
+            width: 16px;
+            height: 14px;
+            background: var(--win95-gray);
+            border: 2px solid;
+            border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .window-btn:active {
+            border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+        }
+
+        .window-content {
+            padding: 16px;
+        }
+
+        /* Marquee banner */
+        .marquee-container {
+            background: #000;
+            border: 3px solid;
+            border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .marquee {
+            display: flex;
+            animation: marquee 15s linear infinite;
+            white-space: nowrap;
+        }
+
+        .marquee-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 8px 20px;
+            background: linear-gradient(180deg, 
+                var(--retro-yellow) 0%, 
+                var(--retro-pink) 50%, 
+                var(--retro-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Section styling */
+        .section-header {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+            color: #000;
+            background: var(--win95-gray);
+            padding: 4px 8px;
+            border: 2px solid;
+            border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-header::before {
+            content: '►';
+            color: var(--win95-blue);
+        }
+
+        /* Amount selector */
+        .amount-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .amount-btn {
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            padding: 8px 16px;
+            background: var(--win95-gray);
+            border: 3px solid;
+            border-color: var(--win95-light) var(--win95-darker) var(--win95-darker) var(--win95-light);
+            cursor: pointer;
+            color: #000;
+            transition: none;
+            min-width: 70px;
+        }
+
+        .amount-btn:hover {
+            background: #d4d4d4;
+        }
+
+        .amount-btn:active,
+        .amount-btn.selected {
+            border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+            background: #a0a0a0;
+        }
+
+        .amount-btn.selected {
+            background: var(--win95-cyan);
+            color: white;
+        }
+
+        .custom-amount {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .custom-amount label {
+            color: #000;
+            font-size: 16px;
+        }
+
+        .custom-amount input {
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            padding: 6px 8px;
+            width: 80px;
+            background: white;
+            border: 2px solid;
+            border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+        }
+
+        .custom-amount input:focus {
+            outline: none;
+            background: #ffffcc;
+        }
+
+        /* Payment buttons container */
+        .payment-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Retro styled payment button base */
+        .retro-pay-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 11px;
+            padding: 16px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: transform 0.1s;
+            position: relative;
+            text-transform: uppercase;
+        }
+
+        .retro-pay-btn:active {
+            transform: translate(2px, 2px);
+        }
+
+        /* PayPal button */
+        .paypal-btn {
+            background: linear-gradient(180deg, #ffd700 0%, #ffb700 50%, #ff9500 100%);
+            border: 4px solid;
+            border-color: #fff5a0 #996600 #664400 #ffdd55;
+            color: #003087;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.5),
+                inset 0 -1px 0 rgba(0,0,0,0.2),
+                4px 4px 0 #000,
+                6px 6px 0 rgba(0,0,0,0.3);
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .paypal-btn:hover {
+            background: linear-gradient(180deg, #ffe033 0%, #ffc933 50%, #ffa733 100%);
+        }
+
+        .paypal-btn:active {
+            box-shadow: 
+                inset 0 1px 0 rgba(0,0,0,0.2),
+                inset 0 -1px 0 rgba(255,255,255,0.3),
+                2px 2px 0 #000;
+        }
+
+        .paypal-icon {
+            width: 24px;
+            height: 24px;
+            background: #003087;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-family: 'VT323', monospace;
+            font-weight: bold;
+        }
+
+        /* Apple Pay button */
+        .apple-btn {
+            background: linear-gradient(180deg, #333 0%, #1a1a1a 50%, #000 100%);
+            border: 4px solid;
+            border-color: #666 #111 #000 #444;
+            color: #fff;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.2),
+                inset 0 -1px 0 rgba(0,0,0,0.5),
+                4px 4px 0 #000,
+                6px 6px 0 rgba(0,0,0,0.3);
+            text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+        }
+
+        .apple-btn:hover {
+            background: linear-gradient(180deg, #444 0%, #2a2a2a 50%, #111 100%);
+        }
+
+        .apple-btn:active {
+            box-shadow: 
+                inset 0 2px 4px rgba(0,0,0,0.5),
+                2px 2px 0 #000;
+        }
+
+        .apple-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Card payment button */
+        .card-btn {
+            background: linear-gradient(180deg, #6a5acd 0%, #483d8b 50%, #2e1f5e 100%);
+            border: 4px solid;
+            border-color: #9370db #2e1f5e #1a0f3e #7b68ee;
+            color: #fff;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.3),
+                4px 4px 0 #000,
+                6px 6px 0 rgba(0,0,0,0.3);
+            text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+        }
+
+        .card-btn:hover {
+            background: linear-gradient(180deg, #7b6bde 0%, #594d9c 50%, #3f2f6f 100%);
+        }
+
+        .card-icon {
+            width: 28px;
+            height: 20px;
+            background: linear-gradient(180deg, #ffd700 30%, #c0c0c0 30%);
+            border: 2px solid #333;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .card-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 3px;
+            right: 3px;
+            height: 2px;
+            background: #333;
+        }
+
+        /* Crypto button */
+        .crypto-btn {
+            background: linear-gradient(180deg, #f7931a 0%, #e2820a 50%, #c76f00 100%);
+            border: 4px solid;
+            border-color: #ffb74d #8b4500 #663300 #ffa726;
+            color: #fff;
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                inset 0 -1px 0 rgba(0,0,0,0.3),
+                4px 4px 0 #000,
+                6px 6px 0 rgba(0,0,0,0.3);
+            text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
+        }
+
+        .crypto-btn:hover {
+            background: linear-gradient(180deg, #ffa32a 0%, #f2921a 50%, #d77f10 100%);
+        }
+
+        .crypto-icon {
+            width: 24px;
+            height: 24px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f7931a;
+            font-weight: bold;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+        }
+
+        /* Under construction GIF area */
+        .construction {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 8px;
+            background: #000;
+            border: 2px dashed var(--retro-yellow);
+        }
+
+        .construction-icon {
+            font-size: 20px;
+            animation: blink 0.5s infinite;
+        }
+
+        .construction-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            color: var(--retro-yellow);
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Status bar */
+        .status-bar {
+            background: var(--win95-gray);
+            border: 2px solid;
+            border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+            padding: 4px 8px;
+            font-size: 14px;
+            color: #000;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .status-bar span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Visitor counter */
+        .visitor-counter {
+            text-align: center;
+            margin-top: 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            color: var(--retro-green);
+        }
+
+        .counter-display {
+            display: inline-flex;
+            background: #000;
+            border: 3px ridge #333;
+            padding: 4px;
+            margin-top: 8px;
+        }
+
+        .counter-digit {
+            background: #001100;
+            color: var(--retro-green);
+            font-family: 'VT323', monospace;
+            font-size: 24px;
+            padding: 4px 6px;
+            border: 1px solid #003300;
+            margin: 0 1px;
+            text-shadow: 0 0 8px var(--retro-green);
+        }
+
+        /* Animated GIF placeholders */
+        .gif-decoration {
+            position: fixed;
+            font-size: 24px;
+            animation: float 3s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .gif-decoration:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+        .gif-decoration:nth-child(2) { top: 30%; right: 8%; animation-delay: 0.5s; }
+        .gif-decoration:nth-child(3) { bottom: 20%; left: 10%; animation-delay: 1s; }
+        .gif-decoration:nth-child(4) { bottom: 40%; right: 5%; animation-delay: 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        /* Guestbook link styling */
+        .guestbook-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .guestbook-link a {
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            color: var(--retro-pink);
+            text-decoration: none;
+            border-bottom: 2px dotted var(--retro-pink);
+        }
+
+        .guestbook-link a:hover {
+            color: var(--retro-yellow);
+            border-color: var(--retro-yellow);
+        }
+
+        /* Webring */
+        .webring {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 2px ridge var(--retro-cyan);
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+        }
+
+        .webring a {
+            color: var(--retro-cyan);
+            text-decoration: none;
+        }
+
+        .webring a:hover {
+            color: white;
+            text-shadow: 0 0 8px var(--retro-cyan);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 500px) {
+            .retro-pay-btn {
+                font-size: 9px;
+                padding: 12px 16px;
+            }
+            
+            .amount-btn {
+                min-width: 60px;
+                font-size: 18px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating decorations -->
+    <div class="gif-decoration">💾</div>
+    <div class="gif-decoration">🌐</div>
+    <div class="gif-decoration">📧</div>
+    <div class="gif-decoration">⭐</div>
+
+    <div class="container">
+        <!-- Main donation window -->
+        <div class="window">
+            <div class="window-titlebar">
+                <span class="window-title">
+                    <span class="window-title-icon">$</span>
+                    donate.exe - Support retroNet
+                </span>
+                <div class="window-buttons">
+                    <button class="window-btn">_</button>
+                    <button class="window-btn">□</button>
+                    <button class="window-btn">×</button>
+                </div>
+            </div>
+            
+            <div class="window-content">
+                <!-- Marquee banner -->
+                <div class="marquee-container">
+                    <div class="marquee">
+                        <span class="marquee-text">★ SUPPORT retroNet! ★ 100% AD-FREE FOREVER ★ COMMUNITY FUNDED ★ ANTI-INFLUENCER ALGORITHM ★ YOUR DONATION KEEPS US RUNNING ★ </span>
+                        <span class="marquee-text">★ SUPPORT retroNet! ★ 100% AD-FREE FOREVER ★ COMMUNITY FUNDED ★ ANTI-INFLUENCER ALGORITHM ★ YOUR DONATION KEEPS US RUNNING ★ </span>
+                    </div>
+                </div>
+
+                <!-- Amount selection -->
+                <div class="section-header">SELECT DONATION AMOUNT</div>
+                
+                <div class="amount-group">
+                    <button class="amount-btn" data-amount="5">$5</button>
+                    <button class="amount-btn selected" data-amount="10">$10</button>
+                    <button class="amount-btn" data-amount="25">$25</button>
+                    <button class="amount-btn" data-amount="50">$50</button>
+                    <div class="custom-amount">
+                        <label>$</label>
+                        <input type="number" id="custom-amount" placeholder="Other" min="1" max="9999">
+                    </div>
+                </div>
+
+                <!-- Payment methods -->
+                <div class="section-header">CHOOSE PAYMENT METHOD</div>
+                
+                <div class="payment-buttons">
+                    <button class="retro-pay-btn paypal-btn" id="paypal-button">
+                        <span class="paypal-icon">PP</span>
+                        <span>Donate with PayPal</span>
+                    </button>
+                    
+                    <button class="retro-pay-btn apple-btn" id="apple-pay-button">
+                        <span class="apple-icon"></span>
+                        <span>Donate with Apple Pay</span>
+                    </button>
+                    
+                    <button class="retro-pay-btn card-btn" id="card-button">
+                        <span class="card-icon"></span>
+                        <span>Donate with Card</span>
+                    </button>
+                    
+                    <button class="retro-pay-btn crypto-btn" id="crypto-button">
+                        <span class="crypto-icon">₿</span>
+                        <span>Donate with Crypto</span>
+                    </button>
+                </div>
+
+                <!-- Under construction notice -->
+                <div class="construction">
+                    <span class="construction-icon">🚧</span>
+                    <span class="construction-text">CRYPTO PAYMENTS COMING SOON!</span>
+                    <span class="construction-icon">🚧</span>
+                </div>
+
+                <!-- Status bar -->
+                <div class="status-bar">
+                    <span>🔒 Secure 128-bit SSL</span>
+                    <span>💰 $0.00 fees</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visitor counter -->
+        <div class="visitor-counter">
+            <div>YOU ARE VISITOR NUMBER:</div>
+            <div class="counter-display">
+                <span class="counter-digit">0</span>
+                <span class="counter-digit">4</span>
+                <span class="counter-digit">2</span>
+                <span class="counter-digit">0</span>
+                <span class="counter-digit">6</span>
+                <span class="counter-digit">9</span>
+            </div>
+        </div>
+
+        <!-- Guestbook link -->
+        <div class="guestbook-link">
+            <a href="#">📖 Sign our Guestbook! 📖</a>
+        </div>
+
+        <!-- Webring -->
+        <div class="webring">
+            <a href="#">« PREV</a>
+            <span>🌐 INDIE WEB RING 🌐</span>
+            <a href="#">NEXT »</a>
+        </div>
+    </div>
+
+    <script>
+        // Amount selection logic
+        const amountBtns = document.querySelectorAll('.amount-btn');
+        const customInput = document.getElementById('custom-amount');
+        let selectedAmount = 10;
+
+        amountBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                amountBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedAmount = parseFloat(btn.dataset.amount);
+                customInput.value = '';
+            });
+        });
+
+        customInput.addEventListener('input', () => {
+            if (customInput.value) {
+                amountBtns.forEach(b => b.classList.remove('selected'));
+                selectedAmount = parseFloat(customInput.value) || 10;
+            }
+        });
+
+        // Payment button handlers (connect to your backend)
+        document.getElementById('paypal-button').addEventListener('click', async () => {
+            alert(`🎉 Initiating PayPal donation for $${selectedAmount}...\n\nThis would redirect to PayPal!`);
+            // In production:
+            // window.location.href = `/api/paypal/create-order?amount=${selectedAmount}`;
+        });
+
+        document.getElementById('apple-pay-button').addEventListener('click', async () => {
+            alert(`🍎 Initiating Apple Pay for $${selectedAmount}...\n\nThis would open Apple Pay sheet!`);
+            // In production: Trigger Stripe Payment Request
+        });
+
+        document.getElementById('card-button').addEventListener('click', async () => {
+            alert(`💳 Opening card payment for $${selectedAmount}...\n\nThis would show Stripe card form!`);
+            // In production: Show Stripe card element modal
+        });
+
+        document.getElementById('crypto-button').addEventListener('click', () => {
+            alert(`🚧 UNDER CONSTRUCTION! 🚧\n\nCrypto payments coming soon to retroNet!`);
+        });
+
+        // Animate visitor counter on load
+        const digits = document.querySelectorAll('.counter-digit');
+        digits.forEach((digit, i) => {
+            setTimeout(() => {
+                digit.style.transform = 'scale(1.1)';
+                setTimeout(() => digit.style.transform = 'scale(1)', 100);
+            }, i * 100);
+        });
+    </script>
+</body>
+</html>

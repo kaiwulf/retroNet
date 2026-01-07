@@ -1,68 +1,66 @@
-"""
-Custom Jinja2 template filters for retroNet Flask app
-Add these to your Flask application to fix the date_format and datetime_format errors
-"""
-
-from datetime import datetime
-
-
-def date_format(value):
-    """
-    Format a date object or datetime object to a simple date string
-    Example: "January 15, 2024"
-    """
-    if value is None:
-        return ""
-    
-    if isinstance(value, str):
-        try:
-            value = datetime.fromisoformat(value)
-        except (ValueError, AttributeError):
-            return value
-    
-    if isinstance(value, datetime):
-        return value.strftime("%B %d, %Y")
-    
-    return str(value)
-
-
-def datetime_format(value):
-    """
-    Format a datetime object to include time
-    Example: "January 15, 2024 at 3:45 PM"
-    """
-    if value is None:
-        return ""
-    
-    if isinstance(value, str):
-        try:
-            value = datetime.fromisoformat(value)
-        except (ValueError, AttributeError):
-            return value
-    
-    if isinstance(value, datetime):
-        return value.strftime("%B %d, %Y at %I:%M %p")
-    
-    return str(value)
-
-
 def register_filters(app):
-    """
-    Register all custom filters with the Flask app
-    
-    Usage in your Flask app:
-        from template_filters import register_filters
-        
-        app = Flask(__name__)
-        register_filters(app)
-    """
-    app.jinja_env.filters['date_format'] = date_format
-    app.jinja_env.filters['datetime_format'] = datetime_format
+    @app.template_filter('date_format')
+    def date_format(value):
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value)
+            except (ValueError, AttributeError):
+                return value
+        if isinstance(value, datetime):
+            return value.strftime("%B %d, %Y")
+        return str(value)
 
+    @app.template_filter('datetime_format')
+    def datetime_format(value):
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            try:
+                value = datetime.fromisoformat(value)
+            except (ValueError, AttributeError):
+                return value
+        if isinstance(value, datetime):
+            return value.strftime("%B %d, %Y at %I:%M %p")
+        return str(value)
 
-# Alternative: Use decorators in your main Flask file
-# 
-# @app.template_filter('date_format')
-# def date_format(value):
-#     # ... filter code here ...
-#     pass
+    @app.template_filter('format_message')
+    def format_message(text):
+        """Format message body with proper styling for quotes and signatures"""
+        if not text:
+            return ''
+
+        lines = text.split('\n')
+        formatted_lines = []
+        in_signature = False
+
+        for line in lines:
+            # Check for signature delimiter
+            if line.strip() == '--':
+                in_signature = True
+                formatted_lines.append('<div class="signature">')
+                formatted_lines.append(escape(line))
+                continue
+            
+            if in_signature:
+                formatted_lines.append(escape(line))
+                continue
+            
+            # Count quote depth
+            quote_depth = 0
+            stripped = line
+            while stripped.startswith('>'):
+                quote_depth += 1
+                stripped = stripped[1:].lstrip()
+            
+            if quote_depth > 0:
+                css_class = f'quoted-line quoted-line-{min(quote_depth, 3)}'
+                formatted_lines.append(f'<span class="{css_class}">{escape(line)}</span>')
+            else:
+                formatted_lines.append(escape(line))
+
+        if in_signature:
+            formatted_lines.append('</div>')
+
+        return Markup('\n'.join(formatted_lines))
