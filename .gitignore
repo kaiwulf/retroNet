@@ -3,3 +3,8 @@ bin/
 pyvenv.cfg
 __pycache__
 lib
+lib64
+
+# Flask instance folder (sqlite db + local config)
+retronet/instance/
+var/

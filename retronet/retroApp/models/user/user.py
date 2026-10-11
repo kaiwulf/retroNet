@@ -380,7 +380,6 @@ def get_stalkers(user_id):
     """, (user_id,))
     
     results = cursor.fetchall()
-    db.close()
     
     return [dict(row) for row in results]
 

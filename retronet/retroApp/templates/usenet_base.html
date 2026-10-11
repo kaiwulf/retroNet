@@ -1,10 +1,38 @@
+<!-- Macro for rendering threaded messages -->
+{% macro render_thread(article, depth) %}
+<tr class="thread-row {% if selected_article and selected_article.id == article.id %}selected{% endif %}" 
+    data-article-id="{{ article.id }}">
+    <td class="col-thread">
+        {% if article.children %}
+        <span class="thread-icon">►</span>
+        {% endif %}
+        {% if not article.read %}
+        <span class="unread-icon">✉</span>
+        {% endif %}
+    </td>
+    <td class="col-subject">
+        <a href="{{ url_for('view_article', article_id=article.id) }}" class="subject-link">
+            <span class="thread-indent" style="padding-left: {{ depth * 20 }}px;"></span>
+            {{ article.subject }}
+        </a>
+    </td>
+    <td class="col-author">{{ article.author_name }}</td>
+    <td class="col-date">{{ article.date.strftime('%m/%d/%y') }}</td>
+</tr>
+{% if article.children %}
+    {% for child in article.children %}
+        {{ render_thread(child, depth + 1) }}
+    {% endfor %}
+{% endif %}
+{% endmacro %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}retroNet Newsreader{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/usenet.css') }}">
 </head>
 <body>
     <!-- Menu Bar -->
@@ -151,31 +179,3 @@
     {% block scripts %}{% endblock %}
 </body>
 </html>
-
-<!-- Macro for rendering threaded messages -->
-{% macro render_thread(article, depth) %}
-<tr class="thread-row {% if selected_article and selected_article.id == article.id %}selected{% endif %}" 
-    data-article-id="{{ article.id }}">
-    <td class="col-thread">
-        {% if article.children %}
-        <span class="thread-icon">►</span>
-        {% endif %}
-        {% if not article.read %}
-        <span class="unread-icon">✉</span>
-        {% endif %}
-    </td>
-    <td class="col-subject">
-        <a href="{{ url_for('view_article', article_id=article.id) }}" class="subject-link">
-            <span class="thread-indent" style="padding-left: {{ depth * 20 }}px;"></span>
-            {{ article.subject }}
-        </a>
-    </td>
-    <td class="col-author">{{ article.author_name }}</td>
-    <td class="col-date">{{ article.date.strftime('%m/%d/%y') }}</td>
-</tr>
-{% if article.children %}
-    {% for child in article.children %}
-        {{ render_thread(child, depth + 1) }}
-    {% endfor %}
-{% endif %}
-{% endmacro %}

@@ -1,9 +1,7 @@
-from flask import Flask, jsonify, request
-from asgiref.wsgi import WsgiToAsgi
-import asyncio, httpx
-import aiosqlite
 import os
-from functools import wraps
+
+from flask import Flask
+from asgiref.wsgi import WsgiToAsgi
 
 # def ycms_factory(test_config=None):
 def create_retroNet(test_config=None):
@@ -28,12 +26,11 @@ def create_retroNet(test_config=None):
 
     from .models import db
     db.init_app(app)
+    # schema.sql is written entirely with CREATE ... IF NOT EXISTS, so running
+    # it on every boot is idempotent: it creates anything missing and leaves
+    # existing tables (and their data) alone.
     with app.app_context():
-        try:
-            db.init_db()
-            print("✅ Database initialized!")
-        except Exception as e:
-            print(f"ℹ️  Database already exists or error: {e}")
+        db.init_db()
 
     from .template_filters import register_filters
     register_filters(app)
@@ -59,7 +56,7 @@ def create_retroNet(test_config=None):
     from .views import chat
     app.register_blueprint(chat.bp)
 
-    from .views import usenet
+    from .views.usenet import usenet
     app.register_blueprint(usenet.bp)
     
     return app

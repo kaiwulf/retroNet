@@ -1,5 +1,6 @@
 from flask import redirect, url_for, request, render_template
 from markupsafe import escape, Markup
+from .dummy import NEWSGROUPS, ARTICLES
 
 def article_tools(app):
 
@@ -48,7 +49,7 @@ def article_tools(app):
         """View a specific article"""
         article = next((a for a in ARTICLES if a['id'] == article_id), None)
         if not article:
-            return redirect(url_for('index'))
+            return redirect(url_for('usenet.usenet'))
         
         group = next((g for g in NEWSGROUPS if g['id'] == article['newsgroup_id']), None)
         
@@ -56,15 +57,9 @@ def article_tools(app):
         articles = [a for a in ARTICLES if a['newsgroup_id'] == article['newsgroup_id']]
         threads = build_threads(articles)
         
-        # Group newsgroups by category
-        categories = {}
-        for g in NEWSGROUPS:
-            cat = g['category']
-            if cat not in categories:
-                categories[cat] = []
-            categories[cat].append(g)
+        categories = build_categories()
         
-        return render_template('index.html',
+        return render_template('usenet/index.html',
                             categories=categories,
                             selected_group=group,
                             threads=threads,
@@ -76,21 +71,21 @@ def article_tools(app):
         """Post a new article"""
         group = next((g for g in NEWSGROUPS if g['id'] == group_id), None)
         if not group:
-            return redirect(url_for('index'))
+            return redirect(url_for('usenet.usenet'))
         
         if request.method == 'POST':
             # Handle post submission
             # This would save to database in real implementation
             return redirect(url_for('view_group', group_id=group_id))
         
-        return render_template('post.html', group=group, reply_to=None)
+        return render_template('usenet/post.html', group=group, reply_to=None)
 
     @app.route('/reply/<int:article_id>', methods=['GET', 'POST'])
     def reply_article(article_id):
         """Reply to an article"""
         article = next((a for a in ARTICLES if a['id'] == article_id), None)
         if not article:
-            return redirect(url_for('index'))
+            return redirect(url_for('usenet.usenet'))
         
         group = next((g for g in NEWSGROUPS if g['id'] == article['newsgroup_id']), None)
         
@@ -98,14 +93,14 @@ def article_tools(app):
             # Handle reply submission
             return redirect(url_for('view_group', group_id=group['id']))
         
-        return render_template('post.html', group=group, reply_to=article)
+        return render_template('usenet/post.html', group=group, reply_to=article)
     
     @app.route('/group/<int:group_id>')
     def view_group(group_id):
         """View a specific newsgroup"""
         group = next((g for g in NEWSGROUPS if g['id'] == group_id), None)
         if not group:
-            return redirect(url_for('index'))
+            return redirect(url_for('usenet.usenet'))
         
         # Get articles for this group
         articles = [a for a in ARTICLES if a['newsgroup_id'] == group_id]
@@ -113,29 +108,21 @@ def article_tools(app):
         # Build thread structure
         threads = build_threads(articles)
         
-        # Group newsgroups by category for left pane
-        categories = {}
-        for g in NEWSGROUPS:
-            cat = g['category']
-            if cat not in categories:
-                categories[cat] = []
-            categories[cat].append(g)
+        categories = build_categories()
         
-        return render_template('index.html',
+        return render_template('usenet/index.html',
                             categories=categories,
                             selected_group=group,
                             threads=threads,
                             selected_article=None)
 
-    @app.route('/demo/quotes')
-    def quote_demo():
-        """Demo page showing quote block system"""
-        return render_template('quote-demo.html')
+def build_categories():
+    """Group the newsgroup list by category for the newsreader's left pane."""
+    categories = {}
+    for group in NEWSGROUPS:
+        categories.setdefault(group['category'], []).append(group)
+    return categories
 
-    @app.route('/demo/preview')
-    def static_preview():
-        """Static preview of the newsreader interface"""
-        return render_template('static-preview.html')
 
 def build_threads(articles):
     """Build threaded structure from flat article list"""

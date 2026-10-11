@@ -1,4 +1,4 @@
-from flask import Blueprint, g, render_template
+from flask import Blueprint, abort, g, render_template
 from retroApp.models.user.user import get_user_profile
 import pprint
 
