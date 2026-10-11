@@ -102,7 +102,7 @@ These are verified but not yet fixed. Lessons will work through them roughly in 
 
 **Security: lesson 2, required before real users**
 - [ ] `SECRET_KEY='dev'` is hardcoded, so anyone can forge a login cookie.
-- [ ] `/create/<username>` has no login or ownership check. Anyone can overwrite anyone's profile.
+- [x] `/create/<username>` has no login or ownership check. Anyone can overwrite anyone's profile.
 - [ ] The invite key is never validated against the `invite` table.
 - [ ] Signup crashes with a 400 if the `key` field is missing, and it accepts a blank email.
 - [ ] Werkzeug 3.0.0 is pinned and has published security advisories. Upgrade it.

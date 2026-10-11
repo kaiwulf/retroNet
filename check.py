@@ -47,6 +47,49 @@ con.execute("INSERT INTO stalker (stalker_id, stalked_id) VALUES (2, 1)")
 con.commit(); con.close()
 check("GET /user/alice WITH a follower", lambda: client.get("/user/alice").status_code)
 
+# ── Lesson 2: who may edit a profile? ─────────────────────────────────────
+PROFILE = dict(display="X", track="t", artist="a", album="b", bio="b")
+
+def display_name_of(username):
+    con = sqlite3.connect(db_path)
+    row = con.execute("SELECT display_name FROM user WHERE username = ?", (username,)).fetchone()
+    con.close()
+    return row[0] if row else None
+
+def signed_in_as(username, password="pw"):
+    c = app.test_client()
+    c.post("/auth/signin", data=dict(username=username, password=password))
+    return c
+
+def anon_edit():
+    before = display_name_of("alice")
+    r = app.test_client().post("/create/alice", data=dict(PROFILE, display="HACKED BY ANON"))
+    if display_name_of("alice") != before:
+        return "profile was overwritten!"
+    return r.headers.get("Location")
+
+def bob_edits_alice():
+    before = display_name_of("alice")
+    r = signed_in_as("bob").post("/create/alice", data=dict(PROFILE, display="HACKED BY BOB"))
+    if display_name_of("alice") != before:
+        return "profile was overwritten!"
+    return r.status_code
+
+def alice_edits_alice():
+    r = signed_in_as("alice").post("/create/alice", data=dict(PROFILE, display="Alice"))
+    return r.headers.get("Location") if display_name_of("alice") == "Alice" else "edit did not save"
+
+def fresh_signup_can_create_profile():
+    c = app.test_client()   # signs up, then goes straight to profile creation, no separate sign-in
+    c.post("/auth/signup", data=dict(username="carol", password="pw", email="c@x.com", key="123"))
+    r = c.post("/create/carol", data=dict(PROFILE, display="Carol"))
+    return r.headers.get("Location") if display_name_of("carol") == "Carol" else "profile not saved"
+
+check("L2 anonymous edit -> sent to sign in", anon_edit,       want="/auth/signin")
+check("L2 bob edits alice -> 403",           bob_edits_alice, want=403)
+check("L2 alice edits alice -> saved",       alice_edits_alice, want="/user/alice")
+check("L2 new signup can create profile",    fresh_signup_can_create_profile, want="/user/carol")
+
 print()
 for ok, label, detail in results:
     print(f"  {'PASS' if ok else 'FAIL'}  {label:34} {detail}")

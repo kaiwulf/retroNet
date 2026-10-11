@@ -1,13 +1,17 @@
 from flask import (
-    Blueprint, g, render_template, request, flash, redirect, url_for
+    Blueprint, abort, g, render_template, request, flash, redirect, url_for
 )
 from retroApp.models.user.user import get_user_profile
 from retroApp.models.user.create import create_profile
+from retroApp.views.auth.auth import login_required
 
 bp = Blueprint('create', __name__, url_prefix='/create')
 
 @bp.route('/<username>', methods=('GET', 'POST'))
+@login_required
 def new_profile(username):
+    if g.user['username'] != username:
+        abort(403)
     print(f"new_profile username {username}")
     try:
         if request.method == 'POST':

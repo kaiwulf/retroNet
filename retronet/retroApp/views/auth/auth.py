@@ -26,12 +26,14 @@ def signup():
         
         if error is None:
             try:
-                db.execute(
+                cursor = db.execute(
                     "INSERT INTO user (username, password, email, invite_key) VALUES (?, ?, ?, ?)",
                     (username, generate_password_hash(password), email, key),
                 )
                 db.commit()
-                flash('Account created successfully! Please sign in.')
+                session.clear()
+                session['user_id'] = cursor.lastrowid
+                flash('Account created! Now set up your profile.')
                 return redirect(url_for("create.new_profile", username=username))
                 # return redirect(url_for("auth.signin"))
             except db.IntegrityError as e:
