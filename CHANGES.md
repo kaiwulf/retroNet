@@ -89,6 +89,14 @@ All of these were tracked in git, so `git checkout 2c4f053 -- <path>` brings any
 
 ---
 
+## 2026-10-10: Lesson 2.2 housekeeping
+
+- **Deleted `retronet/config.py`** (empty file). It looked like the app's config file, but it was never loaded. `create_retroNet()` calls `app.config.from_pyfile('config.py')`, and because the app uses `instance_relative_config=True`, that path is relative to the **instance folder**: `var/retroApp-instance/config.py`. Your real config (secret key and so on) goes there. That folder is gitignored, so secrets never get committed.
+- **Added `lessons/`** to hold small demo scripts used in lessons. `lessons/forge_cookie.py` forges a login cookie from a known secret key, to show why the key matters. It's safe to delete any time.
+- **`check.py`** now also checks that the app refuses to start without a `SECRET_KEY`, and that your real config's key is strong.
+
+---
+
 ## Known issues backlog
 
 These are verified but not yet fixed. Lessons will work through them roughly in this order.
@@ -101,7 +109,7 @@ These are verified but not yet fixed. Lessons will work through them roughly in 
 - [ ] `/auth/backend` renders `auth/backend.html` (which doesn't exist) and queries a `post` table (which also doesn't exist).
 
 **Security: lesson 2, required before real users**
-- [ ] `SECRET_KEY='dev'` is hardcoded, so anyone can forge a login cookie.
+- [x] `SECRET_KEY='dev'` is hardcoded, so anyone can forge a login cookie.
 - [x] `/create/<username>` has no login or ownership check. Anyone can overwrite anyone's profile.
 - [ ] The invite key is never validated against the `invite` table.
 - [ ] Signup crashes with a 400 if the `key` field is missing, and it accepts a blank email.

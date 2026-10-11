@@ -90,6 +90,31 @@ check("L2 bob edits alice -> 403",           bob_edits_alice, want=403)
 check("L2 alice edits alice -> saved",       alice_edits_alice, want="/user/alice")
 check("L2 new signup can create profile",    fresh_signup_can_create_profile, want="/user/carol")
 
+# ── Lesson 2.2: the secret key ────────────────────────────────────────────
+def refuses_to_start_without_key():
+    try:
+        create_retroNet({"DATABASE": os.path.join(tempfile.mkdtemp(), "k.sqlite"), "TESTING": True})
+    except RuntimeError:
+        return "refused"
+    except Exception as exc:
+        return f"crashed with {type(exc).__name__}, not RuntimeError"
+    return "started anyway (fell back to a default key)"
+
+def real_config_key_is_strong():
+    import runpy
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "var", "retroApp-instance", "config.py")
+    if not os.path.exists(path):
+        return "var/retroApp-instance/config.py does not exist"
+    key = runpy.run_path(path).get("SECRET_KEY")
+    if not key:
+        return "config.py has no SECRET_KEY"
+    if key == "dev" or len(key) < 32:
+        return "SECRET_KEY is too short or guessable"
+    return "strong"
+
+check("L2 no SECRET_KEY -> refuses to start", refuses_to_start_without_key, want="refused")
+check("L2 real config has a strong key",      real_config_key_is_strong,    want="strong")
+
 print()
 for ok, label, detail in results:
     print(f"  {'PASS' if ok else 'FAIL'}  {label:34} {detail}")

@@ -10,7 +10,6 @@ def create_retroNet(test_config=None):
         instance_relative_config=True
     )
     app.config.from_mapping(
-        SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'retroNet.sqlite'),
     )
 
@@ -18,6 +17,13 @@ def create_retroNet(test_config=None):
         app.config.from_pyfile('config.py', silent=True)
     else:
         app.config.from_mapping(test_config)
+    
+    if not app.config.get('SECRET_KEY'):
+        raise RuntimeError(
+            "No SECRET_KEY configured. Create "
+            f"{os.path.join(app.instance_path, 'config.py')} containing:\n"
+            "    SECRET_KEY = '<output of: python -c \"import secrets; print(secrets.token_hex(32))\">'"
+        )
     
     try:
         os.makedirs(app.instance_path)

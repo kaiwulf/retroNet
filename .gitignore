@@ -8,3 +8,4 @@ lib64
 # Flask instance folder (sqlite db + local config)
 retronet/instance/
 var/
+lessons/
