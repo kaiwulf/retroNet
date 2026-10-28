@@ -3,4 +3,5 @@
 # Usage: ./start.sh   (run from anywhere)
 set -euo pipefail
 cd "$(dirname "$0")"
-exec ../bin/python run.py
+ROOT="$(cd .. && pwd)"   # absolute path to the repo root (avoids a "../" sys.prefix warning)
+exec "$ROOT"/bin/python run.py

@@ -244,7 +244,7 @@ CREATE TABLE IF NOT EXISTS profile_view (
 CREATE TABLE IF NOT EXISTS invite (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     invite_code TEXT UNIQUE NOT NULL,
-    created_by INTEGER NOT NULL,
+    created_by INTEGER, -- NULL = created by the site admin from the command line
     used_by INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     used_at TIMESTAMP,

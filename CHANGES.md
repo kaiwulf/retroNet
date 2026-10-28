@@ -97,6 +97,18 @@ All of these were tracked in git, so `git checkout 2c4f053 -- <path>` brings any
 
 ---
 
+## 2026-10-10: Lesson 2.3 housekeeping (invites)
+
+- **Schema change: `invite.created_by` can now be NULL.** It used to be `NOT NULL`, which meant every invite needed an existing user to create it, so a brand-new site could never get its first member. NULL now means "created by the site admin from the command line."
+  - **This needs a database reset.** `init_db()` only creates tables that are *missing* (`CREATE TABLE IF NOT EXISTS`). It never changes a table that already exists, so your current DB still has the old `NOT NULL` rule. Lesson 2.3, step 0 walks through the reset. The general lesson: once you have real users, a schema change needs a *migration* (an `ALTER TABLE` script), not a reset.
+- **New `retroApp/models/invite.py`** with `create_invite()` and a `create-invite` command. Registered in `__init__.py`.
+- **New `retronet/manage.sh`** runs Flask's command line without having to remember `--app 'retroApp:create_retroNet()'`. Try `retronet/manage.sh create-invite` or `retronet/manage.sh --help`.
+- **Fixed `init-db` (and the new command) to run inside an app context.** A plain `@click.command` added with `app.cli.add_command()` doesn't get one, so `get_db()` crashed with "Working outside of application context." `@with_appcontext` fixes it.
+- **`start.sh` and `manage.sh` now use an absolute path to the venv,** which silences the `Unexpected value in sys.prefix` warning caused by running `../bin/python`.
+- **`check.py` now uses real invite codes for its test signups** and has three invite tests.
+
+---
+
 ## Known issues backlog
 
 These are verified but not yet fixed. Lessons will work through them roughly in this order.

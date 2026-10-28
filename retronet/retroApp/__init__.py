@@ -32,6 +32,9 @@ def create_retroNet(test_config=None):
 
     from .models import db
     db.init_app(app)
+
+    from .models.invite import create_invite_command
+    app.cli.add_command(create_invite_command)
     # schema.sql is written entirely with CREATE ... IF NOT EXISTS, so running
     # it on every boot is idempotent: it creates anything missing and leaves
     # existing tables (and their data) alone.

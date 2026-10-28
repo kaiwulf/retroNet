@@ -14,6 +14,15 @@ client = app.test_client()
 
 results = []
 
+PASSWORD = "retro-pass-123"
+PW = dict(password=PASSWORD, confirm_password=PASSWORD)
+
+def new_invite():
+    """Create a real, unused invite code in the test database."""
+    from retroApp.models.invite import create_invite
+    with app.app_context():
+        return create_invite()
+
 def check(label, fn, want=200):
     try:
         got = fn()
@@ -23,8 +32,8 @@ def check(label, fn, want=200):
         results.append((got == want, label, f"{got} (want {want})"))
 
 # seed two users so the profile pages have something to render
-client.post("/auth/signup", data=dict(username="alice", password="pw", email="a@x.com", key="123"))
-client.post("/auth/signup", data=dict(username="bob", password="pw", email="b@x.com", key="123"))
+client.post("/auth/signup", data=dict(username="alice", **PW, email="a@x.com", key=new_invite()))
+client.post("/auth/signup", data=dict(username="bob", **PW, email="b@x.com", key=new_invite()))
 
 check("GET /usenet renders",          lambda: client.get("/usenet").status_code)
 check("GET /user/alice",              lambda: client.get("/user/alice").status_code)
@@ -56,7 +65,7 @@ def display_name_of(username):
     con.close()
     return row[0] if row else None
 
-def signed_in_as(username, password="pw"):
+def signed_in_as(username, password=PASSWORD):
     c = app.test_client()
     c.post("/auth/signin", data=dict(username=username, password=password))
     return c
@@ -81,7 +90,7 @@ def alice_edits_alice():
 
 def fresh_signup_can_create_profile():
     c = app.test_client()   # signs up, then goes straight to profile creation, no separate sign-in
-    c.post("/auth/signup", data=dict(username="carol", password="pw", email="c@x.com", key="123"))
+    c.post("/auth/signup", data=dict(username="carol", **PW, email="c@x.com", key=new_invite()))
     r = c.post("/create/carol", data=dict(PROFILE, display="Carol"))
     return r.headers.get("Location") if display_name_of("carol") == "Carol" else "profile not saved"
 
@@ -114,6 +123,100 @@ def real_config_key_is_strong():
 
 check("L2 no SECRET_KEY -> refuses to start", refuses_to_start_without_key, want="refused")
 check("L2 real config has a strong key",      real_config_key_is_strong,    want="strong")
+
+# ── Lesson 2.3: invite keys ───────────────────────────────────────────────
+def user_exists(username):
+    con = sqlite3.connect(db_path)
+    found = con.execute("SELECT 1 FROM user WHERE username = ?", (username,)).fetchone()
+    con.close()
+    return found is not None
+
+def bogus_invite_rejected():
+    r = app.test_client().post("/auth/signup", data=dict(username="dave", **PW, email="d@x.com", key="TOTALLY-INVALID"))
+    if user_exists("dave"):
+        return "account was created"
+    return "rejected" if r.status_code == 200 else f"status {r.status_code}"
+
+def valid_invite_gets_used():
+    code = new_invite()
+    app.test_client().post("/auth/signup", data=dict(username="erin", **PW, email="e@x.com", key=code))
+    con = sqlite3.connect(db_path)
+    user = con.execute("SELECT id FROM user WHERE username = 'erin'").fetchone()
+    used_by = con.execute("SELECT used_by FROM invite WHERE invite_code = ?", (code,)).fetchone()[0]
+    if not user:
+        return "account was not created"
+    return "marked used" if used_by == user[0] else f"invite.used_by is {used_by!r}, want {user[0]}"
+
+def reused_invite_rejected():
+    code = new_invite()
+    app.test_client().post("/auth/signup", data=dict(username="frank", **PW, email="f@x.com", key=code))
+    r = app.test_client().post("/auth/signup", data=dict(username="grace", **PW, email="g@x.com", key=code))
+    if user_exists("grace"):
+        return "second account was created with the same code"
+    return "rejected" if r.status_code == 200 else f"status {r.status_code}"
+
+check("L2 bogus invite -> no account",  bogus_invite_rejected,  want="rejected")
+check("L2 valid invite -> marked used", valid_invite_gets_used, want="marked used")
+check("L2 reused invite -> no account", reused_invite_rejected, want="rejected")
+
+# ── Lesson 2.4: input validation ──────────────────────────────────────────
+def user_count():
+    con = sqlite3.connect(db_path)
+    n = con.execute("SELECT COUNT(*) FROM user").fetchone()[0]
+    con.close()
+    return n
+
+_signup_attempts = iter(range(1000))
+
+def rejected(**fields):
+    """Submit signup with valid values, overridden by `fields`, and expect no new account."""
+    n = next(_signup_attempts)
+    data = dict(username=f"tester{n}", email=f"tester{n}@x.com", key=new_invite(), **PW)
+    data.update(fields)
+    data = {k: v for k, v in data.items() if v is not None}     # None = leave the field out entirely
+    before = user_count()
+    r = app.test_client().post("/auth/signup", data=data)
+    html = r.get_data(as_text=True)
+    if user_count() != before:
+        return "account was created"
+    if r.status_code != 200:
+        return f"status {r.status_code} (should re-show the form with a message)"
+    if "constraint" in html.lower() or "IntegrityError" in html:
+        return "shows a raw database error to the user"
+    return "rejected"
+
+def invite_survives_failed_signup():
+    code = new_invite()
+    app.test_client().post("/auth/signup", data=dict(username="ivy", email="i@x.com", key=code,
+                                                     password=PASSWORD, confirm_password="different"))
+    con = sqlite3.connect(db_path)
+    used_by = con.execute("SELECT used_by FROM invite WHERE invite_code = ?", (code,)).fetchone()[0]
+    con.close()
+    return "unused" if used_by is None else "invite was used up by a failed signup"
+
+def signin_errors_identical():
+    wrong_user = app.test_client().post("/auth/signin", data=dict(username="nobody", password=PASSWORD))
+    wrong_pass = app.test_client().post("/auth/signin", data=dict(username="alice", password="wrong-password"))
+    return "identical" if wrong_user.get_data() == wrong_pass.get_data() else "page differs: reveals which usernames exist"
+
+def signin_case_insensitive():
+    r = app.test_client().post("/auth/signin", data=dict(username="  ALICE ", password=PASSWORD))
+    return r.headers.get("Location") or f"status {r.status_code}"
+
+check("L2 signup: invite field missing",  lambda: rejected(key=None),                     want="rejected")
+check("L2 signup: blank email",           lambda: rejected(email=""),                     want="rejected")
+check("L2 signup: email without @",       lambda: rejected(email="not-an-email"),         want="rejected")
+check("L2 signup: username with /",       lambda: rejected(username="a/b"),               want="rejected")
+check("L2 signup: username too short",    lambda: rejected(username="ab"),                want="rejected")
+check("L2 signup: password under 8",      lambda: rejected(password="short", confirm_password="short"), want="rejected")
+check("L2 signup: passwords differ",      lambda: rejected(confirm_password="something-else"), want="rejected")
+check("L2 signup: username taken",        lambda: rejected(username="alice"),             want="rejected")
+check("L2 signup: 'Alice' when alice exists", lambda: rejected(username="Alice"),         want="rejected")
+check("L2 signup: email taken",           lambda: rejected(email="a@x.com"),              want="rejected")
+check("L2 failed signup keeps invite",    invite_survives_failed_signup,                  want="unused")
+check("L2 signin: same error either way", signin_errors_identical,                        want="identical")
+check("L2 signin: ignores case/spaces",   signin_case_insensitive,                        want="/user/alice")
+check("L2 signin: field missing -> no 400", lambda: app.test_client().post("/auth/signin", data=dict(username="alice")).status_code, want=200)
 
 print()
 for ok, label, detail in results:
