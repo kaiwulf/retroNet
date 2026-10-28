@@ -123,8 +123,10 @@ These are verified but not yet fixed. Lessons will work through them roughly in 
 **Security: lesson 2, required before real users**
 - [x] `SECRET_KEY='dev'` is hardcoded, so anyone can forge a login cookie.
 - [x] `/create/<username>` has no login or ownership check. Anyone can overwrite anyone's profile.
-- [ ] The invite key is never validated against the `invite` table.
-- [ ] Signup crashes with a 400 if the `key` field is missing, and it accepts a blank email.
+- [x] The invite key is never validated against the `invite` table.
+- [x] Signup crashes with a 400 if the `key` field is missing, and it accepts a blank email. (Lesson 2.4 also added username/password rules, duplicate-account messages, and a uniform sign-in error.)
+- [ ] `create.py` still reads fields with `request.form[...]` (400 on a missing field) and wraps everything in a catch-all `except`.
+- [ ] The signup form's `display` field is never saved.
 - [ ] Werkzeug 3.0.0 is pinned and has published security advisories. Upgrade it.
 
 **Fake data shown to real users: lesson 3**

@@ -1,6 +1,5 @@
 import functools
 import re
-from retroApp.models.invite import claim_invite
 
 from flask import (
     Blueprint, g, redirect, render_template, request, flash, session, url_for
@@ -8,6 +7,7 @@ from flask import (
 
 from werkzeug.security import check_password_hash, generate_password_hash
 from retroApp.models.db import get_db
+from retroApp.models.invite import claim_invite
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 USERNAME_RE = re.compile(r'[a-z0-9_-]{3,20}')
@@ -76,7 +76,7 @@ def signin():
 
         if user is None or not check_password_hash(user['password'], password):
             error = 'Incorrect username or password.'
-        
+
         if error is None:
             session.clear()
             session['user_id'] = user['id']
