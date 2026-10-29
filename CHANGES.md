@@ -139,3 +139,39 @@ These are verified but not yet fixed. Lessons will work through them roughly in 
 - [ ] `run.py` sets `config.workers`, but Hypercorn's `serve()` ignores it. Only one worker runs.
 - [ ] The usenet section still reads from `dummy.py`, not from the `usenet_group` and `usenet_post` tables.
 - [ ] Lots of leftover debug `print()` calls (`pprint` of the whole profile, including the password hash).
+
+---
+
+## Planned features
+
+Not started yet. These are bigger pieces of work, not bug fixes.
+
+- [ ] **Landing page CSS rewrite for cross-browser rendering.** The landing page renders differently in Chromium-based browsers and Firefox. Rewrite its CSS so it looks the same in both.
+- [ ] **Customizable site-wide themes.** Let users pick a theme that applies to the whole site, not just one page. Much of this was already built in earlier chats, and that code will be brought in here as the starting point.
+- [ ] **Donations page.** A page has already been generated in another chat and will be brought in. The work is wiring it into the app: route, template, nav link, and matching the active theme.
+- [ ] **Run Hypercorn under Gunicorn.** Write a Gunicorn worker class that runs Hypercorn:
+  - Gunicorn manages the processes: spawning, restarting dead workers, graceful reloads, and a real worker count.
+  - Each worker runs Hypercorn's `serve()` on the sockets Gunicorn hands it, so Hypercorn's protocol support is kept.
+  - Gunicorn's heartbeat is wired into the worker's event loop so a hung worker gets noticed and replaced.
+  - `serve()` gets a `shutdown_trigger` tied to Gunicorn's signals, so shutdowns and reloads are clean.
+  - Estimated at 100–200 lines. It doesn't need to be a fork of either project; it can be a small separate package. Uvicorn's `UvicornWorker` follows the same pattern and is a useful reference.
+  - This also fixes the backlog item above where `run.py` sets `config.workers` but only one worker actually runs.
+- [ ] **Fix CSS animation performance.** The animations slow pages down. Find what's causing the slowdown and fix it while keeping every animation.
+- [ ] **Replace hardcoded front-page data with real data.** The front page shows made-up content. Pull it from the database instead. (Related to the lesson 3 backlog item about `get_user_profile()` inventing data.)
+- [ ] **Fix the visitor counter.** It's buggy and needs work.
+- [ ] **Add old-web features, starting with a webring.** The webring connects the websites of all your projects, with retroNet as one of its members.
+- [ ] **Set up an email server.** *Needed for alpha testers.* The server will also handle mail for other websites that have nothing to do with retroNet, so the setup has to plan for multiple domains from the start: per-domain sending identities and SPF/DKIM/DMARC records, and keeping retroNet's config separate from the other sites'.
+- [ ] **Email notifications to users.** *Needed for alpha testers. Depends on the email server.* Email verification at signup, post notifications, and similar.
+- [ ] **User blogs on profile pages.** A blog on each user's home page. Their stalkers can read posts, comment, and leave emoji reacts (thumbs up, heart, etc.).
+  - **Reacts on reacts.** Users can react to a react. If someone likes a blog post, someone else can like that like, and so on, forming a tree up to 256 levels deep.
+  - **Assess database usage** for nesting that deep: how the tree is stored (e.g. parent pointer + depth column vs. a closure table), how deep chains are queried without recursive-query blowups, and how storage grows.
+  - **Protect against exploits:** enforce the 256-level cap on the server, rate-limit reacts, allow one react per user per node, and stop bots or scripts from flooding deep chains to bloat the DB.
+- [ ] **Custom user websites in MTHL (Manic Text Hyperlink Language).** Users can build their own sites in MTHL or choose from several premade themes. Earlier chats on both will be saved here as the starting point. *Depends on the MTHL interpreter.*
+- [ ] **Personal websites section.** A separate area of the site for users' personal websites, organized into themed neighborhoods/categories in the style of the old personal-homepage directories (e.g. "Area 51" for conspiracy theories). Sites are built in MTHL.
+- [ ] **Build the MTHL interpreter.** It turns MTHL into HTML. It is deliberately **Turing-incomplete** for security, so a user's page can't hang the server or run arbitrary code. It has loops for churning out repeated patterns, but every loop is bounded and finite: no indefinite or ongoing looping, and the cap is low, since websites only have a few repeating patterns. Its output still needs sanitizing so users can't inject scripts or styles into other people's pages.
+- [ ] **Incorporate BlinkShine.** *Depends on the BlinkShine alpha being ready.* BlinkShine is a separate project: an HTML5-based replacement for Macromedia Flash.
+  - A separate part of retroNet where users create their own animations, movies and games, the way they did with Flash.
+  - Users can embed their BlinkShine creations in their MTHL personal websites once it's ready.
+- [ ] **Reach out to Neocities about collaborating.**
+  - **If they're willing:** use the Neocities API to connect retroNet to Neocities.
+  - **If not:** ask whether they'd join a webring instead (see the webring item above).
