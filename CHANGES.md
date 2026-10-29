@@ -147,7 +147,13 @@ These are verified but not yet fixed. Lessons will work through them roughly in 
 Not started yet. These are bigger pieces of work, not bug fixes.
 
 - [ ] **Landing page CSS rewrite for cross-browser rendering.** The landing page renders differently in Chromium-based browsers and Firefox. Rewrite its CSS so it looks the same in both.
-- [ ] **Customizable site-wide themes.** Let users pick a theme that applies to the whole site, not just one page. Much of this was already built in earlier chats, and that code will be brought in here as the starting point.
+- [ ] **Customizable site-wide themes.** Much of this was already built in earlier chats, and that code will be brought in here as the starting point.
+  - **Every section has its own theme** (landing page, Usenet, neighborhood, etc.), and each section offers its own set of premade, built-in themes.
+  - **A theme dropdown** sits at the top left or right. Visitors choose which built-in theme they see for each section, e.g. a different landing page theme.
+  - **Preferences are stored in a cookie,** so you don't need an account to try out themes. This depends on the cookie consent popup: if a visitor declines cookies, their choice only lasts for the current page view.
+  - **No custom themes for the main sections.** Users can design their own themes only for their home page, personal website, and BlinkShine animation/game pages.
+  - **Community theme competitions.** The winner's theme is added to the built-in list.
+- [ ] **Cookie consent popup.** Small, unintrusive, retro-styled, and closable. It exists only to save personal preferences such as themes. Visitors are free to accept or decline. Cookie use is transparent: a short page lists every cookie and what it does, linked to the open source code. The login session cookie is strictly necessary and works whether or not they accept, so declining doesn't stop anyone signing in.
 - [ ] **Donations page.** A page has already been generated in another chat and will be brought in. The work is wiring it into the app: route, template, nav link, and matching the active theme.
 - [ ] **Run Hypercorn under Gunicorn.** Write a Gunicorn worker class that runs Hypercorn:
   - Gunicorn manages the processes: spawning, restarting dead workers, graceful reloads, and a real worker count.
@@ -175,3 +181,56 @@ Not started yet. These are bigger pieces of work, not bug fixes.
 - [ ] **Reach out to Neocities about collaborating.**
   - **If they're willing:** use the Neocities API to connect retroNet to Neocities.
   - **If not:** ask whether they'd join a webring instead (see the webring item above).
+
+### Nav bar links
+
+The top nav is copy-pasted in two places: `templates/user_base.html` (line 39) and `templates/user/retronet_user_page.html` (line 348). Every change below has to be made in both, or the nav could move into one shared include first.
+
+- [ ] **Unify the nav bar across the whole site.** One shared template (e.g. a `nav.html` include) that every page uses, so a link change happens in one place. Do this first; it makes the rest of this list easier.
+- [ ] **Add the nav bar to Usenet.** The Usenet pages (`usenet_base.html`) don't have it yet. This comes for free once the nav is unified.
+- [ ] **Browse** (`/browse`): work out what it should be and whether it's needed at all.
+- [ ] **Remove Forums** (`/forums`). The profile feed also has a `forum` item type and the text "Subscribe to forums and Usenet groups" (`user/profile.html` and `user/retronet_user_page.html`), so clean those up too.
+- [ ] **Add "Neighborhood"** linking to the personal websites section.
+- [ ] **Add "Animation"** linking to the BlinkShine section.
+- [ ] **Build the search feature** (`/search`).
+- [ ] **Point "My Profile" at the signed-in user's own profile.** It currently links to a fixed `/profile`.
+- [ ] **Change / forgot password.** Changing it while signed in, plus a reset for a forgotten password. The forgotten-password reset depends on the email server and notifications.
+
+### Usenet
+
+- [ ] **Make the Usenet menu bar work.** File, Edit, View, Message and Help (`templates/usenet_base.html:39`) are currently plain `<div>`s that do nothing. Turn them into real, interactive drop-down menus.
+  - **CSS first, light JavaScript only if needed.** Drop-downs can open on click with no JS using `<details>`/`<summary>` or `:focus-within`, with CSS animations for the opening and closing. Use JS only for things CSS can't do, such as closing a menu when you click outside it or arrow-key navigation.
+  - **Keyboard accessible:** menus open with Enter/Space and close with Escape.
+  - **Possible menu contents** (suggestions, to be decided):
+    - **File:** New Message, Subscribe to group, Print, Exit to retroNet.
+    - **Edit:** Find in message, Select all.
+    - **View:** Threaded / flat sort, Show read / unread, Theme.
+    - **Message:** New, Reply, Forward, Next, Mark as read.
+    - **Help:** About, Usenet etiquette, Keyboard shortcuts.
+- [ ] **Make the toolbar buttons work too.** Get Msg, New Msg, Reply, Forward, File, Next, Print and Delete (line 48) are also dead buttons. Several overlap with the menus, so the menus and buttons should share the same actions. Depends on the Usenet section reading real data (see the `dummy.py` backlog item).
+
+### Profiles
+
+- [ ] **Show each user's member number on their home page.** Use `user.id` from the database as the public member number, e.g. "Member #42".
+  - **It's already sequential.** `user.id` is `INTEGER PRIMARY KEY AUTOINCREMENT` in `schema.sql`, so the first user is 1, the next is 2, and so on. With `AUTOINCREMENT`, SQLite never reuses an id, even after an account is deleted.
+  - **Gaps are normal.** A deleted account leaves a hole that never gets refilled. So member numbers are always in signup order but not always consecutive.
+  - **A DB reset restarts the count at 1.** Before alpha, that's fine. After real users join, numbers have to survive migrations and backups.
+  - **Trade-off to accept:** sequential numbers show how many accounts exist and the order people joined. That's part of the retro charm here, but it means nothing secret should rely on an id being hard to guess. Ownership checks always use the logged-in session, never the id in the URL.
+
+### Infrastructure
+
+- [ ] **Plan the migration from SQLite to PostgreSQL as the site grows.** Not urgent yet. Two decisions to make later: *when* to migrate, and *when to start nudging the codebase in that direction*.
+  - **Possible triggers for migrating:**
+    - Write contention. SQLite allows only one writer at a time, so once Gunicorn runs several workers (see the Gunicorn item), busy reacts, comments and visitor counting will queue behind each other and you'll start seeing "database is locked" errors.
+    - Running on more than one server.
+    - The DB getting large or busy enough to need proper concurrent access, roles, or online backups.
+  - **Architectural choices to make:**
+    - How the app talks to the DB: keep raw SQL with a thin helper (today's style), or adopt a query layer such as SQLAlchemy Core that runs on both SQLite and Postgres.
+    - Sync vs. async driver (`psycopg` vs. `asyncpg`), which matters because the app runs on Hypercorn.
+    - A schema migration tool (e.g. Alembic) instead of `init_db()` plus resets. You'll need this either way once there are real users (see the Lesson 2.3 note).
+    - How to move existing data across (e.g. `pgloader`, or a one-off export/import script).
+  - **Cheap prep that can start any time** and keeps the move easy:
+    - Keep all SQL inside `models/`, not scattered across views.
+    - Avoid SQLite-only SQL where there's a portable equivalent. Watch for `?` placeholders (Postgres drivers use `%s`), `AUTOINCREMENT` (Postgres uses `GENERATED ... AS IDENTITY`), `INSERT OR IGNORE`, and loose typing (SQLite will store text in an integer column; Postgres won't).
+    - Write tests against the model functions so the same tests can later run against Postgres.
+  - **Knock-on effect on member numbers:** Postgres sequences *do* use up numbers on failed inserts and rolled-back transactions, so after the move there will be more gaps in member numbers than there are now. The migration must also carry existing ids over unchanged and reset the sequence to continue after the highest one.
